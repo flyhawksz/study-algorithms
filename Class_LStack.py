@@ -36,3 +36,13 @@ class LStack():
         p = self._top
         self._top = p.next
         return p.elem
+
+if __name__ == '__main__':
+    st = LStack()
+    st.push(1)
+    st.push(5)
+    print(st.pop())
+    print(st.top())
+    print(st.pop())
+    print(st.is_empty())
+    st.top()

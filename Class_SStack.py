@@ -24,7 +24,7 @@ class SStack():
 
     def top(self):
         if self._elems == []:
-            raise StackUnderflow()
+            raise StackUnderflow("here")
         return self._elems[-1]
 
     def push(self, elem):
@@ -36,3 +36,12 @@ class SStack():
         return self._elems.pop()
 
 
+if __name__ == '__main__':
+    st = SStack()
+    st.push(1)
+    st.push(5)
+    print(st.pop())
+    print(st.top())
+    print(st.pop())
+    print(st.is_empty())
+    st.top()
