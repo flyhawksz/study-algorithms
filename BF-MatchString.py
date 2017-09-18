@@ -81,7 +81,7 @@ def BF3(t, p):
     return count
 
 
-def main():
+if __name__ == '__main__':
     t = 'adbdlkaslduabiowqnl;na;lvjoabpabajoqwierjhkjasdkabxioqabcwuerijbksljdfbiaboargebjjkzxbvjbxzkclvbnwioquegrubv'
     p = 'abc'
     # t = "this is a big apple,this is a big apple,this is a big apple,this is a big apple."
@@ -94,7 +94,3 @@ def main():
     # print (naive_match(t, p))
     print (naive_match2(t, p))
     # print (BF3(t, p))
-
-
-if __name__ == '__main__':
-    main()
