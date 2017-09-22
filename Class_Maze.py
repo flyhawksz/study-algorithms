@@ -5,6 +5,8 @@
 # @Software: PyCharm Community Edition
 
 from Class_SStack import SStack
+from SQueue import SQueue
+
 
 # 四个方向，一步
 dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
@@ -29,11 +31,17 @@ def passible(maze, pos):
 		return False
 	
 	
-def print_path(end, pos, st):
+def print_path_stack(end, pos, st):
 	print 'end:%s ' %(end,)
 	print pos
 	while not st.is_empty():
 		print st.pop()
+
+
+def print_path_queue(qu):
+	while not qu.is_empty():
+		print(qu.dequeue())
+
 
 
 # method 1 use Recursion(递归)
@@ -55,7 +63,7 @@ def find_path(maze, pos, end):
 # method 2 use Stack
 def maze_solve_stack(maze, start, end):
 	if start == end:
-		print start
+		print 'fine path' + start
 		return
 	
 	st = SStack()
@@ -67,7 +75,7 @@ def maze_solve_stack(maze, start, end):
 			nextp = (pos[0] + dirs[i][0],
 			         pos[1] + dirs[i][1])
 			if nextp == end:
-				print_path(end, pos, st)
+				print_path_stack(end, pos, st)
 				return
 			if passible(maze, nextp):
 				st.push((pos, i + 1))
@@ -77,9 +85,38 @@ def maze_solve_stack(maze, start, end):
 	print 'No path found'
 	
 
+# method 3 use queue
+def maze_solve_queue(maze, start, end):
+	if start == end:
+		print 'find path' + start
+		return
+
+	qu = SQueue()
+	# pa = SQueue() # record the path
+	mark(maze, start)
+	qu.enqueue(start)
+	while not qu.is_empty():
+		pos = qu.dequeue()
+		for i in range(4):
+			nextp = (pos[0] + dirs[i][0],
+			         pos[1] + dirs[i][1])
+			if passible(maze, nextp):
+				if nextp == end:
+					print 'find path'
+					print_path_queue(qu)
+					return
+				mark(maze, nextp)
+				qu.enqueue(nextp)
+
+	print 'no path'
+
+
 if __name__ == '__main__':
 	# test method 1
 	# print(find_path(maze, (1, 2), (3, 1)))
 	
 	# test method 2
-	maze_solve_stack(maze, (1, 2), (3, 1))
+	# maze_solve_stack(maze, (1, 2), (3, 1))
+
+	# test method 3
+	maze_solve_queue(maze, (1, 2), (3, 1))
