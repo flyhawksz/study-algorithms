@@ -5,7 +5,7 @@
 # @Software: PyCharm Community Edition
 
 from Class_SStack import SStack
-from SQueue import SQueue
+from queue import Queue
 
 
 # 四个方向，一步
@@ -39,7 +39,7 @@ def print_path_stack(end, pos, st):
 
 
 def print_path_queue(qu):
-	while not qu.is_empty():
+	while not qu.isEmpty():
 		print(qu.dequeue())
 
 
@@ -91,11 +91,11 @@ def maze_solve_queue(maze, start, end):
 		print 'find path' + start
 		return
 
-	qu = SQueue()
+	qu = Queue()
 	# pa = SQueue() # record the path
 	mark(maze, start)
 	qu.enqueue(start)
-	while not qu.is_empty():
+	while not qu.isEmpty():
 		pos = qu.dequeue()
 		for i in range(4):
 			nextp = (pos[0] + dirs[i][0],
