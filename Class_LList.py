@@ -64,7 +64,7 @@ class LList:
             p = self._head
             while p.next is not None:
                 p = p.next
-            p.next = p
+            p.next = t
 
     def insert(self, elem):
         pass
