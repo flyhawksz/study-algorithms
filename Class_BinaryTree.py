@@ -27,42 +27,43 @@ class BinaryTree:
 	"""
 	
 	def __init__(self, item):
-		self.root = BTNode(item)
+		self.tree = BTNode(item)
 	
 	def insertLeft(self, item):
-		if self.leftChild is None:
-			self.leftChild = BinaryTree(item)
+		if self.tree.leftChild is None:
+			self.tree.leftChild = BinaryTree(item)
 		else:
 			t = BinaryTree(item)
-			t.leftChild = self.leftChild
-			self.leftChild = t
+			t.leftChild = self.tree.leftChild
+			self.tree.leftChild = t
 	
 	def insertRight(self, item):
-		if self.rightChild is None:
-			self.rightChild = BinaryTree(item)
+		if self.tree.rightChild is None:
+			self.tree.rightChild = BinaryTree(item)
 		else:
 			t = BinaryTree(item)
-			t.rightChild = self.rightChild
-			self.rightChild = t
+			t.rightChild = self.tree.rightChild
+			self.tree.rightChild = t
 		
 		
 	def isEmpty(self):
-		return self.root is None
+		return self.tree is None
 	
 	
 	def num_nodes(self):
+		pass
 	
 	
 	def getData(self):
-		return self.root.item
+		return self.tree.item
 	
 	
 	def getLeftChild(self):
-		return self.leftChild
+		return self.tree.leftChild
 	
 	
 	def getRightChild(self):
-		return self.rightChild
+		return self.tree.rightChild
 	
 	
 	def traversal(self):   # 遍历二叉树节点迭代器
