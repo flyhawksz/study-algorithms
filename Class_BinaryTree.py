@@ -6,7 +6,7 @@
 
 class BTNode:
 	"""节点类"""
-	def __init__(self, item, leftChild=None, rightChild=None):
+	def __init__(self, item=None, leftChild=None, rightChild=None):
 		self.item = item
 		self.leftChild = leftChild
 		self.rightChild = rightChild
@@ -26,8 +26,12 @@ class BinaryTree:
 	forall()
 	"""
 	
-	def __init__(self, item):
+	def __init__(self, item=None):
 		self.tree = BTNode(item)
+		
+	def setRoot(self, item):
+		self.tree.item = item
+	
 	
 	def insertLeft(self, item):
 		if self.tree.leftChild is None:
@@ -68,6 +72,8 @@ class BinaryTree:
 	
 	def traversal(self):   # 遍历二叉树节点迭代器
 		pass
+	
+	def createBinaryTreeInPreorder(self):  # 创建二叉树，遵循前序遍历方式输入
 	
 	
 if __name__ == '__main__':
