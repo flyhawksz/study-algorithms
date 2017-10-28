@@ -24,7 +24,6 @@ class BinaryTree:
 		self.leftChild = None
 		self.rightChild = None
 
-
 	def insertLeft(self, newNode):
 		if self.leftChild is None:
 			self.leftChild = BinaryTree(newNode)
@@ -70,7 +69,11 @@ if __name__ == '__main__':
 	tree.insertLeft('b')
 	tree.insertRight('c')
 	tree.getLeftChild().insertRight('d')
-	tree.getRightChild().insertLeft	('e')
+	tree.getRightChild().insertLeft('e')
 	tree.getRightChild().insertRight('f')
+
+	tree.getRightChild().getRightChild().insertRight('g')
+
+	print(tree.getRightChild().getRightChild().getRightChild().getRootValue())
 
 	# 2.create a tree with string in preoder
