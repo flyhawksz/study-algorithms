@@ -28,8 +28,6 @@ class binaryTree:
 	forall()
 	"""
 
-	_buildTreeIndex = 0
-
 	def __init__(self):
 		self.root = treeNode()
 
@@ -44,69 +42,99 @@ class binaryTree:
 
 		return root
 
-	def createTreeByListWithRecursion(self, preOrder, index=0):
+	def createTreeByListWithRecursion(self, preOrderList):
 		"""
-		根据前序列表和中序列表,重建二叉树
+		根据前序列表重建二叉树
 		:param preOrder: 输入前序列表
 		:return: 二叉树
 		"""
+		preOrder = preOrderList
 		if preOrder is None or len(preOrder) <= 0:
 			return None
-
-		if preOrder[0] is '#':
+		currentItem = preOrder.pop(0)  # 模拟C语言指针移动
+		if currentItem is '#':
 			root = None
 		else:
-			self._buildTreeIndex = self._buildTreeIndex + 1
-			root = treeNode(preOrder[0])
-			root.leftChild = self.createTreeByList(preOrder[1:])
-			root.rightChild = self.createTreeByList(preOrder[self._buildTreeIndex+1:])
-			list
+			root = treeNode(currentItem)
+			root.leftChild = self.createTreeByListWithRecursion(preOrder)
+			root.rightChild = self.createTreeByListWithRecursion(preOrder)
 		return root
 
-	def createTreeByListWithStack(self, preOrderString):
+	def createTreeByListWithStack(self, preOrderList):
 		"""
 		根据前序列表和中序列表,重建二叉树
 		:param preOrder: 输入前序列表
 		:return: 二叉树
 		"""
-		preOrder = list(preOrderString)
+		preOrder = preOrderList
 		pStack = SStack()
-		if preOrder is None or len(preOrder) <= 0:
+
+		# check
+		if preOrder is None or len(preOrder) <= 0 or preOrder[0] is '#':
 			return None
 
+		# get the root
 		tmpItem = preOrder.pop(0)
-		if tmpItem is '#':
-			root = None
-		else:
-			root = treeNode(tmpItem)
+		root = treeNode(tmpItem)
 
+		# push root
 		pStack.push(root)
 		currentRoot = root
 
 		while preOrder:
+			# get another item
 			tmpItem = preOrder.pop(0)
-			if tmpItem is '#':
-				currentRoot.leftChild = None
-				parent = pStack.pop()
-				currentRoot = parent
-				tmpItem = preOrder.pop(0)
-				if tmpItem is '#':
-					currentRoot.rightChild = None
-					parent = pStack.pop()
-					currentRoot = parent
-				else:
-					currentRoot = self.insertRight(currentRoot, tmpItem)
-					pStack.push(currentRoot)
-
-			else:
+			# has child
+			if tmpItem is not '#':
+				# does not has left child, insert one
 				if currentRoot.leftChild is None:
 					currentRoot = self.insertLeft(currentRoot, tmpItem)
 					pStack.push(currentRoot.leftChild)
 					currentRoot = currentRoot.leftChild
-				else:
+
+				# otherwise insert right child
+				elif currentRoot.rightChild is None:
 					currentRoot = self.insertRight(currentRoot, tmpItem)
 					pStack.push(currentRoot.rightChild)
 					currentRoot = currentRoot.rightChild
+			# one child is null
+			else:
+				# if has no left child
+				if currentRoot.leftChild is None:
+					currentRoot.leftChild = None
+
+					# get another item fill right child
+					tmpItem = preOrder.pop(0)
+					# has right child
+					if tmpItem is not '#':
+						currentRoot = self.insertRight(currentRoot, tmpItem)
+						pStack.push(currentRoot.rightChild)
+						currentRoot = currentRoot.rightChild
+					# right child is null
+					else:
+						currentRoot.rightChild = None
+						# pop itself
+						parent = pStack.pop()
+						# pos parent
+						if not pStack.is_empty():
+							parent = pStack.pop()
+						# parent become current root
+						currentRoot = parent
+
+						# return from right child, so the parent has right child, go to parent's parent
+						if currentRoot.rightChild is not None:
+							if not pStack.is_empty():
+								parent = pStack.pop()
+								currentRoot = parent
+
+				# there is a leftchild ,fill right child with null and return to parent
+				else:
+					currentRoot.rightChild = None
+					# pop itself
+					parent = pStack.pop()
+					if not pStack.is_empty():
+						parent = pStack.pop()
+					currentRoot = parent
 
 		return root
 
@@ -156,6 +184,19 @@ class binaryTree:
 
 		pass
 
+def printBTree(bt, depth):
+	'''''
+	递归打印这棵二叉树，#号表示该节点为NULL
+	'''
+	ch = bt.key if bt else '#'
+	if depth > 0:
+		print '%s%s%s' % ((depth - 1) * '  ', '--', ch)
+	else:
+		print ch
+	if not bt:
+		return
+	printBTree(bt.leftChild, depth + 1)
+	printBTree(bt.rightChild, depth + 1)
 
 
 	# 1 creat a tree with insert method
@@ -181,21 +222,29 @@ def createTreeByMethod():
 	print (myTree.getLeftChild().getRootValue())
 
 	# 2.create a tree with string in preoder
-def createTreeByList():
+def createTreeByListWithRecursion():
 	global myTree
+	global treeElementList
 
-	treeElementList = '124#8##5##369###7##'
-	# myTree = myTree.createTreeByListWithRecursion(treeElementList)
-	# print (myTree)
+	myTree = myTree.createTreeByListWithRecursion(list(treeElementList))
+	printBTree(myTree, 0)
 
-	myTree = myTree.createTreeByListWithStack(treeElementList)
-	print (myTree)
+def createTreeByListWithStack():
+	global myTree
+	global treeElementList
+
+	myTree = myTree.createTreeByListWithStack(list(treeElementList))
+	printBTree(myTree, 0)
 
 	# 3.create a tree by input
 def createTreeByInput():
-
-	myTree.createTreeByInput(myTree)
+	global myTree
+	myTree = myTree.createTreeByInput(myTree)
+	printBTree(myTree, 0)
 
 if __name__ == '__main__':
 	myTree = binaryTree()
-	createTreeByList()
+	treeElementList = '124#8##5##369###7##'
+	createTreeByListWithStack()
+	# createTreeByListWithRecursion()
+	# createTreeByInput()
