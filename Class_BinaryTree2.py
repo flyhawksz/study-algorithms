@@ -173,16 +173,6 @@ class binaryTree:
 	def getRightChild(self):
 		return self.rightChild
 
-	def traversal(self):   # 遍历二叉树节点迭代器
-		pass
-
-	def createBinaryTreeInPreorderWithArray(self, arr):  # 创建二叉树，遵循前序遍历方式输入,solve array
-
-		if len(arr) < 1:
-			return None
-
-
-		pass
 
 def printBTree(bt, depth):
 	'''''
@@ -222,29 +212,163 @@ def createTreeByMethod():
 	print (myTree.getLeftChild().getRootValue())
 
 	# 2.create a tree with string in preoder
-def createTreeByListWithRecursion():
-	global myTree
-	global treeElementList
+def createTreeByListWithRecursion(myTree, treeElements):
 
-	myTree = myTree.createTreeByListWithRecursion(list(treeElementList))
+	myTree = myTree.createTreeByListWithRecursion(list(treeElements))
 	printBTree(myTree, 0)
+	return myTree
 
-def createTreeByListWithStack():
-	global myTree
-	global treeElementList
+def createTreeByListWithStack(myTree, treeElements):
 
-	myTree = myTree.createTreeByListWithStack(list(treeElementList))
+	myTree = myTree.createTreeByListWithStack(list(treeElements))
 	printBTree(myTree, 0)
+	return myTree
 
 	# 3.create a tree by input
-def createTreeByInput():
-	global myTree
+def createTreeByInput(myTree):
+
 	myTree = myTree.createTreeByInput(myTree)
 	printBTree(myTree, 0)
+	return myTree
+	
+	
+# 	to do something with data
+def todo(root):
+	if root.key is not None:
+		print root.key
+	
+	
+# 	pre-order traversal with recursion
+def preorderTraversalWithRecursion(root):
+	if root is not None:
+		todo(root)
+		preorderTraversalWithRecursion(root.leftChild)
+		preorderTraversalWithRecursion(root.rightChild)
+
+
+# 	in-order traversal with recursion
+def inorderTraversalWithRecursion(root):
+	if root is not None:
+		inorderTraversalWithRecursion(root.leftChild)
+		todo(root)
+		inorderTraversalWithRecursion(root.rightChild)
+
+
+# 	post-order traversal with recursion
+def postorderTraversalWithRecursion(root):
+	if root is not None:
+		postorderTraversalWithRecursion(root.leftChild)
+		postorderTraversalWithRecursion(root.rightChild)
+		todo(root)
+		
+		
+# pre-order traversal with stack
+def preorderTraversalWithStack(root):
+	if root is None:
+		return
+	
+	myStack = []
+	while root or myStack:
+		# check left child
+		while root:
+			todo(root)
+			myStack.append(root)
+			root = root.leftChild
+		# finish check left child. left child is None, loop over
+		
+		# get parent
+		root = myStack.pop()
+		# check right child
+		root = root.rightChild
+	
+
+# in-order traversal with stack
+def inorderTraversalWithStack(root):
+	if root is None:
+		return
+	
+	myStack = []
+	while root or myStack:
+		# check left sub-tree get the last child
+		while root:
+			myStack.append(root)
+			root = root.leftChild
+		# finish check left child. left child is None, loop over
+		
+
+		# the last child is None , get parent
+		root = myStack.pop()
+		todo(root)
+		# check right child
+		root = root.rightChild
+
+
+# post-order traversal with stack
+def postorderTraversalWithStack(root):
+	"""利用堆栈实现树的后序遍历"""
+	if root is None:
+		return
+	myStack1 = []
+	myStack2 = []
+	node = root
+	myStack1.append(node)
+	while myStack1:  # 这个while循环的功能是找出后序遍历的逆序，存在myStack2里面
+		node = myStack1.pop()
+		if node.leftChild:
+			myStack1.append(node.leftChild)
+		if node.rightChild:
+			myStack1.append(node.rightChild)
+		myStack2.append(node)
+	while myStack2:  # 将myStack2中的元素出栈，即为后序遍历次序
+		todo(myStack2.pop())
+
+
+# level-order traversal with queue
+def levelorderTraversalWithQueue(root):
+	if root is None:
+		return
+	myQueue = []
+	node = root
+	myQueue.append(node)
+	while myQueue:
+		node = myQueue.pop(0)
+		todo(node)
+		if node.leftChild is not None:
+			myQueue.append(node.leftChild)
+		if node.rightChild is not None:
+			myQueue.append(node.rightChild)
+
 
 if __name__ == '__main__':
 	myTree = binaryTree()
-	treeElementList = '124#8##5##369###7##'
-	createTreeByListWithStack()
-	# createTreeByListWithRecursion()
-	# createTreeByInput()
+	treeElements = '124#8##5##369###7##'
+	# myTree = createTreeByListWithStack(myTree, treeElements )
+
+	myTree = createTreeByListWithRecursion(myTree, treeElements)
+
+	# myTree = createTreeByInput(myTree)
+	print ('*'*80)
+	print ('pre-order Traversal')
+	preorderTraversalWithRecursion(myTree)
+	print ('-'*80)
+	preorderTraversalWithStack(myTree)
+
+	print ('*'*80)
+	print ('in-order Traversal')
+	print ('*'*80)
+	inorderTraversalWithRecursion(myTree)
+	print ('-'*80)
+	inorderTraversalWithStack(myTree)
+
+	print ('*'*80)
+	print ('pos-order Traversal')
+	print ('*'*80)
+	postorderTraversalWithRecursion(myTree)
+	print ('-'*80)
+	postorderTraversalWithStack(myTree)
+
+	print ('*'*80)
+	print ('level-order Traversal')
+	print ('*'*80)
+	levelorderTraversalWithQueue(myTree)
+	print ('-'*80)
