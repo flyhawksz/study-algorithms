@@ -76,4 +76,3 @@ if __name__ == '__main__':
 
 	print(tree.getRightChild().getRightChild().getRightChild().getRootValue())
 
-	# 2.create a tree with string in preoder
