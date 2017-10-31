@@ -62,7 +62,7 @@ class binaryTree:
 
 	def createTreeByListWithStack(self, preOrderList):
 		"""
-		根据前序列表和中序列表,重建二叉树
+		根据前序列表重建二叉树
 		:param preOrder: 输入前序列表
 		:return: 二叉树
 		"""
@@ -137,6 +137,32 @@ class binaryTree:
 					currentRoot = parent
 
 		return root
+
+	def createLevelOrderTreeWithQueue(self, root, levOder):
+		"""
+		:param root: a empty tree objedt
+		:param levOder: a list that item in level order
+		:return: tree
+		"""
+		if len(levOder) < 1:
+			return None
+		
+		t = 0
+		myQueue = []
+		
+		myQueue.append(root)
+		while myQueue and t <= len(levOder) - 1:
+			root = myQueue.pop(0)
+			root.key = levOder[t]
+			t += 1
+			
+			if root.leftChild is None:
+				myQueue.append(root.leftChild)
+			if root.rightChild is None:
+				myQueue.append(root.rightChild)
+		
+		return root
+		
 
 	def insertLeft(self, root, newNode):
 		if root.leftChild is None:
