@@ -22,15 +22,53 @@ class BinHeap:
 	def percUp(self, index):
 		while index // 2 > 0:
 			if self.heapList[index] < self.heapList[index//2]:
-				tmp = self.heapList[index // 2]
-				self.heapList[index // 2] = self.heapList[index]
-				self.heapList[index] = tmp
-	
+				self.heapList[index] , self.heapList[index // 2] = self.heapList[index//2], self.heapList[index]
 				index = index // 2
-				
 			# if more than parent ,quit
 			else:
 				return
+
+	def minChildIndex(self, index):
+		# if there is only left child, no right child
+		if index * 2 + 1 > self.currentSize:
+			# return left child index
+			return index * 2
+
+		else:  # there are left child and right child
+			# left child is smaller
+			if self.heapList[index * 2] < self.heapList[index * 2 + 1]:
+				# return left child index
+				return index * 2
+			else:
+				# otherwise return right child index
+				return index * 2 + 1
+
+
+	def percDown(self, index):
+		while (index * 2) <= self.currentSize:  # the node still has child
+			minChildIndex = self.minChild(index)
+
+			# current node value is greater than all the child, change position
+			if self.heapList[index] > self.heapList[minChildIndex]:
+				self.heapList[index], self.heapList[minChildIndex] = \
+					self.heapList[minChildIndex], self.heapList[index]
+
+			# change index
+			index = minChildIndex
+			# if this heap has been ordered, may use short cut, quit compare
+			# else:
+			#     return
+
+	#
+	def buildHeapWithList(self, alist):
+		# get the middle level to start
+		i = len(alist) // 2
+		self.currentSize = len(alist)
+		self.heapList = [0] + alist[:]
+		while (i > 0):
+			self.percDown(i)
+			i -= 1
+
 
 
 def printBTree(bt, depth):
