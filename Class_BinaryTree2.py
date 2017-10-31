@@ -138,29 +138,32 @@ class binaryTree:
 
 		return root
 
-	def createLevelOrderTreeWithQueue(self, root, levOder):
+	def createLevelOrderTreeWithQueue(self, levOder):
 		"""
 		:param root: a empty tree objedt
 		:param levOder: a list that item in level order
 		:return: tree
 		"""
+		root = treeNode()
+		
 		if len(levOder) < 1:
 			return None
 		
 		t = 0
 		myQueue = []
 		
-		myQueue.append(root)
+		currentRoot = root
+		myQueue.append(currentRoot)
 		while myQueue and t <= len(levOder) - 1:
-			root = myQueue.pop(0)
-			root.key = levOder[t]
+			currentRoot = myQueue.pop(0)
+			currentRoot.key = levOder[t]
 			t += 1
 			
-			if root.leftChild is None:
-				myQueue.append(root.leftChild)
-			if root.rightChild is None:
-				myQueue.append(root.rightChild)
-		
+			if currentRoot.leftChild is None:
+				myQueue.append(self.insertLeft(currentRoot, None).leftChild)
+			if currentRoot.rightChild is None:
+				myQueue.append(self.insertRight(currentRoot, None).rightChild)
+				
 		return root
 		
 
@@ -200,10 +203,12 @@ class binaryTree:
 		return self.rightChild
 
 
-def printBTree(bt, depth):
+def printBTree(self, bt, depth):
 	'''''
 	递归打印这棵二叉树，#号表示该节点为NULL
 	'''
+
+
 	ch = bt.key if bt else '#'
 	if depth > 0:
 		print '%s%s%s' % ((depth - 1) * '  ', '--', ch)
@@ -214,8 +219,7 @@ def printBTree(bt, depth):
 	printBTree(bt.leftChild, depth + 1)
 	printBTree(bt.rightChild, depth + 1)
 
-
-	# 1 creat a tree with insert method
+# 1 creat a tree with insert method
 def createTreeByMethod():
 
 	myTree = binaryTree()
@@ -237,7 +241,7 @@ def createTreeByMethod():
 	myTree.getLeftChild().setRootValue('hello')
 	print (myTree.getLeftChild().getRootValue())
 
-	# 2.create a tree with string in preoder
+# 2.create a tree with string in preoder
 def createTreeByListWithRecursion(myTree, treeElements):
 
 	myTree = myTree.createTreeByListWithRecursion(list(treeElements))
@@ -250,7 +254,7 @@ def createTreeByListWithStack(myTree, treeElements):
 	printBTree(myTree, 0)
 	return myTree
 
-	# 3.create a tree by input
+# 3.create a tree by input
 def createTreeByInput(myTree):
 
 	myTree = myTree.createTreeByInput(myTree)
