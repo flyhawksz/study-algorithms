@@ -28,7 +28,7 @@ class BinHeap:
 			else:
 				return
 
-	def minChildIndex(self, index):
+	def minChild(self, index):
 		# if there is only left child, no right child
 		if index * 2 + 1 > self.currentSize:
 			# return left child index
@@ -89,7 +89,7 @@ def printBTree(bt, depth):
 	printBTree(bt.rightChild, depth + 1)
 
 
-if __name__ == '__main__':
+def createHeapByInsert():
 	bh = BinHeap()
 	print 'Insert'
 	for i in range(0, 100):
@@ -100,3 +100,17 @@ if __name__ == '__main__':
 	tree = binaryTree()
 	tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
 	printBTree(tree, 0)
+
+
+def createHeapByList():
+	bh = BinHeap()
+	print 'List'
+	alist = [random.random() for i in range(10)]
+	bh.buildHeapWithList(alist)
+	tree = binaryTree()
+	tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
+	printBTree(tree, 0)
+
+
+if __name__ == '__main__':
+	createHeapByList()
