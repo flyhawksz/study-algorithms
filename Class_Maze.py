@@ -7,7 +7,6 @@
 from Class_SStack import SStack
 from queue import Queue
 
-
 # 四个方向，一步
 dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 maze = [[1, 1, 1, 1, 1, 1, 1, 1],
@@ -20,6 +19,7 @@ maze = [[1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1]]
 
 
+# make a mark for visited
 def mark(maze, pos):
 	maze[pos[0]][pos[1]] = 2
 
@@ -29,10 +29,10 @@ def passible(maze, pos):
 		return True
 	else:
 		return False
-	
-	
+
+
 def print_path_stack(end, pos, st):
-	print 'end:%s ' %(end,)
+	print 'end:%s ' % (end,)
 	print pos
 	while not st.is_empty():
 		print st.pop()
@@ -41,7 +41,6 @@ def print_path_stack(end, pos, st):
 def print_path_queue(qu):
 	while not qu.isEmpty():
 		print(qu.dequeue())
-
 
 
 # method 1 use Recursion(递归)
@@ -56,7 +55,7 @@ def find_path(maze, pos, end):
 			if find_path(maze, nextp, end):
 				print pos,
 				return True
-
+	
 	return False
 
 
@@ -83,14 +82,14 @@ def maze_solve_stack(maze, start, end):
 				st.push((nextp, 0))
 				break
 	print 'No path found'
-	
+
 
 # method 3 use queue
 def maze_solve_queue(maze, start, end):
 	if start == end:
 		print 'find path' + start
 		return
-
+	
 	qu = Queue()
 	# pa = SQueue() # record the path
 	mark(maze, start)
@@ -107,7 +106,7 @@ def maze_solve_queue(maze, start, end):
 					return
 				mark(maze, nextp)
 				qu.enqueue(nextp)
-
+	
 	print 'no path'
 
 
@@ -116,7 +115,7 @@ if __name__ == '__main__':
 	# print(find_path(maze, (1, 2), (3, 1)))
 	
 	# test method 2
-	# maze_solve_stack(maze, (1, 2), (3, 1))
+	maze_solve_stack(maze, (1, 2), (3, 1))
 
-	# test method 3
-	maze_solve_queue(maze, (1, 2), (3, 1))
+# test method 3
+# maze_solve_queue(maze, (1, 2), (3, 1))

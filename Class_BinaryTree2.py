@@ -310,8 +310,18 @@ def preorderTraversalWithStack(root):
 		root = myStack.pop()
 		# check right child
 		root = root.rightChild
-	
 
+
+# another methode
+def preorderTraversalWithStack2(root):
+	myStack = SStack()
+	while root or myStack:
+		while root:  # go down ro the left
+			todo(root)  # deal with data
+			myStack.push(root.rightChild)  # push right child
+			root = root.leftChild
+		root = myStack.pop()  # end of left branch , go back deal with right branch
+	
 # in-order traversal with stack
 def inorderTraversalWithStack(root):
 	if root is None:
