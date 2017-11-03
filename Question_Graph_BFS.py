@@ -10,6 +10,25 @@
 from Class_Graph import Graph, Vertex
 from queue import Queue
 
+def dfs(g, start):
+	"""
+	姥姥的伪代码
+	void  DFS( Graph G,  int V )
+	{ /* 从第V个顶点出发递归地深度优先遍历图G */
+    VertexType W;
+      Visited[V] = TRUE;
+    VisitFunc(V);      /* 访问第V个顶点 */
+    for( W = FirstAdjV(G, V);  W;  W = NextAdjV (G, V, W) )
+        if( !Visited[W] )
+           DFS(G, W); /* 对V的尚未访问的邻接顶点W递归调用DFS */
+}
+
+	:param g:
+	:param start:
+	:return:
+	"""
+
+
 
 def bfs(g, start):
 	"""
