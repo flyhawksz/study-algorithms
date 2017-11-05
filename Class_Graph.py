@@ -92,7 +92,9 @@ class Vertex1:
 	
 class Graph:
 	def __init__(self):
-+
+		self.vertexList = {}
+		self.edgesList = {}
+		self.numVertices = 0
 		
 	def addVertex(self, key):
 		newVertex = Vertex(key)

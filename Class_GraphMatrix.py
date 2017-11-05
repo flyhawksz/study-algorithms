@@ -16,7 +16,7 @@ class Graph_Matrix:
 
 	def __init__(self, vertices={}, matrix=[]):
 		"""
-
+		
 		:param vertices:a dict with vertex id and index of matrix , such as {vertex:index}
 		:param matrix: a matrix
 		"""
