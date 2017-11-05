@@ -4,7 +4,8 @@
 # @File    : Class_Graph.py
 # @Software: PyCharm Community Edition
 
-import os, sys
+import sys
+import os
 
 
 class Vertex:
@@ -66,8 +67,8 @@ class Vertex:
 	def getId(self):
 		return self.id
 
-'''
-class Vertex:
+
+class Vertex1:
 	def __init__(self, key):
 		self.id = key
 		self.connectTo = {}
@@ -87,7 +88,7 @@ class Vertex:
 	
 	def getWeight(self,nbr):
 		return self.connectTo[nbr]
-'''
+
 	
 class Graph:
 	def __init__(self):
@@ -150,4 +151,4 @@ if __name__ == '__main__':
 
 	for v in g:
 		for w in v.getConnections():
-			print("( %s , %s )" % (v.getId(), w.getId()))
+			print("( %s , %s )" % (v.getId(), w.getId()))  # v.connectTo.keys()[0].id to check id
