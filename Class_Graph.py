@@ -92,8 +92,7 @@ class Vertex1:
 	
 class Graph:
 	def __init__(self):
-		self.vertexList = {}
-		self.numVertices = 0
++
 		
 	def addVertex(self, key):
 		newVertex = Vertex(key)
@@ -115,7 +114,10 @@ class Graph:
 			nv = self.addVertex(fromV)
 		if toV not in self.vertexList:
 			nv = self.addVertex(toV)
-			
+
+		if (fromV, toV) not in self.edgesList:
+			self.edgesList[(fromV, toV)] = cost
+
 		self.vertexList[fromV].addNeighbor(self.vertexList[toV], cost)
 		
 	def getVertices(self):

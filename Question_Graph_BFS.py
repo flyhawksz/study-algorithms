@@ -116,9 +116,9 @@ def traverse(y):
 
 def draw2(myGraph):
 	G = nx.Graph()                 #建立一个空的无向图G
-	for node in myGraph.nodes:
+	for node in myGraph.vertexList:
 		G.add_node(str(node))
-	for edge in myGraph.edges:
+	for edge in myGraph.edgesList:
 		G.add_edge(str(edge[0]), str(edge[1]))
 
 	print( "nodes:", G.nodes())      #输出全部的节点： [1, 2, 3]
@@ -130,15 +130,15 @@ def draw2(myGraph):
 
 def draw3(myGraph):
 	G = nx.DiGraph()                 #建立一个空的无向图G
-	for node in myGraph.nodes:
+	for node in myGraph.vertexList:
 		G.add_node(str(node))
-	for edge in myGraph.edges:
+	for edge in myGraph.edgesList:
 		G.add_edge(str(edge[0]), str(edge[1]))
 
 	print( "nodes:", G.nodes())      #输出全部的节点： [1, 2, 3]
 	print( "edges:", G.edges())      #输出全部的边：[(2, 3)]
 	print("number of edges:", G.number_of_edges())   #输出边的数量：1
-	nx.draw(G)
+	nx.draw(G, with_labels=True)
 	plt.savefig("wuxiangtu.png")
 	plt.show()
 
@@ -146,23 +146,25 @@ def draw3(myGraph):
 if __name__ == '__main__':
 	g = Graph()
 
-	# g = buildGraph('e:\\fourletterwords2.txt')
+	g = buildGraph('e:\\fourletterwords2.txt')
 	# bfs(g, g.getVertex('BOSS'))
 	# dfs(g, g.getVertex('BOSS'))
 	# traverse(g.getVertex('SAGE'))
 
-	g.addEdge(0, 1, 5)
-	g.addEdge(0, 5, 2)
-	g.addEdge(1, 2, 4)
-	g.addEdge(2, 3, 9)
-	g.addEdge(3, 4, 7)
-	g.addEdge(3, 5, 3)
-	g.addEdge(4, 0, 1)
-	g.addEdge(5, 4, 8)
-	g.addEdge(5, 2, 1)
+	# g.addEdge(0, 1, 5)
+	# g.addEdge(0, 5, 2)
+	# g.addEdge(1, 2, 4)
+	# g.addEdge(2, 3, 9)
+	# g.addEdge(3, 4, 7)
+	# g.addEdge(3, 5, 3)
+	# g.addEdge(4, 0, 1)
+	# g.addEdge(5, 4, 8)
+	# g.addEdge(5, 2, 1)
 
-	bfs(g, g.getVertex(2))
-	traverse(g.getVertex(1))
-	print('-'*80)
-	dfs(g, g.getVertex(2))
-	traverse(g.getVertex(1))
+	draw2(g)
+	# bfs(g, g.getVertex(2))
+
+	# traverse(g.getVertex(1))
+	# print('-'*80)
+	# dfs(g, g.getVertex(2))
+	# traverse(g.getVertex(1))
