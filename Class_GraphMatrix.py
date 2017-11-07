@@ -113,6 +113,35 @@ class Graph_Matrix:
 
 	def __repr__(self):
 		return str(''.join(str(i) for i in self.matrix))
+	
+	def to_do_vertex(self, i):
+		print('vertex: %s' % (self.vertices[i]))
+	
+	def to_do_edge(self, w, k):
+		print('edge tail: %s, edge head: %s, weight: %s' % (self.vertices[w], self.vertices[k], str(self.matrix[w][k])))
+	
+	def DepthFirstSearch(self):
+		"""
+		traverse all the vertices, there are may some disconnected vertices, dfs can not visit
+		so that need visit all of them, and call dfs
+		"""
+		def DFS(self, i, queue):  # with queue
+			
+			queue.append(i)
+			self.to_do_vertex(i)
+			visited[i] = 1
+			if len(queue) != 0:
+				w = queue.pop()
+				for k in range(self.num_vertices):
+					if self.matrix[w][k] is 1 and visited[k] is 0:
+						self.to_do_edge(w, k)
+						DFS(self, k, queue)
+		
+		visited = [0] * self.num_vertices
+		queue = []
+		for i in range(self.num_vertices):
+			if visited[i] is 0:
+				DFS(self, i, queue)
 
 
 def createList():
@@ -153,6 +182,9 @@ def create_undirected_matrix():
 	# sum(N[f]))
 	my_graph = Graph_Matrix(nodes, matrix)
 	print(my_graph)
+	
+	my_graph.DepthFirstSearch()
+	
 	draw_undircted_graph(my_graph)
 
 
@@ -170,6 +202,9 @@ def create_directed_matrix():
 
 	my_graph = Graph_Matrix(nodes, matrix)
 	print(my_graph)
+	
+	my_graph.DepthFirstSearch()
+	
 	draw_directed_graph(my_graph)
 
 
@@ -189,7 +224,11 @@ def create_directed_graph_from_edges():
 	my_graph = Graph_Matrix(nodes)
 	my_graph.add_edges_from_list(edge_list)
 	print(my_graph)
+	
+	my_graph.DepthFirstSearch()
+	
 	draw_directed_graph(my_graph)
+
 
 
 def draw_undircted_graph(my_graph):
@@ -222,34 +261,75 @@ def draw_directed_graph(my_graph):
 	plt.savefig("wuxiangtu.png")
 	plt.show()
 
+	
 
 def dfs_visit(self, numCourses, prerequisites):
-	graph = [[] for _ in xrange(numCourses)]
+	"""
+	traverse all the vertices, there are may some disconnected vertices, dfs can not visit
+	so that need visit all of them, and call dfs
+	:param self:
+	:param numCourses:
+	:param prerequisites:
+	:return:
+	"""
+	graph = [[] for _ in xrange(num_)]
 	visit = [0 for _ in xrange(numCourses)]
 	for x, y in prerequisites:
 		graph[x].append(y)
 
-	def dfs(i):
-		if visit[i] == -1:
-			return False
-		if visit[i] == 1:
-			return True
-		visit[i] = -1
-		for j in graph[i]:
-			if not dfs(j):
+		def dfs(i):
+			if visit[i] == -1:
 				return False
-		visit[i] = 1
-		return True
+			if visit[i] == 1:
+				return True
+			visit[i] = -1
+			for j in graph[i]:
+				if not dfs(j):
+					return False
+			visit[i] = 1
+			return True
 
 	for i in xrange(numCourses):
 		if not dfs(i):
 			return False
 	return True
+	
+def to_do_vertex(self, i):
+	print('vertex: %s' % (self.vertices[i]))
+
+def to_do_edge(self, w, k):
+	print('edge tail: %s, edge head: %s, weight: %s' % (self.vertices[w], self.vertices[k], str(self.matrix[w][k])))
+	
+def DepthFirstSearch(graph):
+	"""
+	traverse all the vertices, there are may some disconnected vertices, dfs can not visit
+	so that need visit all of them, and call dfs
+	"""
+	
+	def DFS(i, queue):  # with queue
+		
+		queue.append(i)
+		to_do_vertex(i)
+		visited[i] = 1
+		if len(queue) != 0:
+			w = queue.pop()
+			for k in range(graph.num_vertices):
+				if graph.matrix[w][k] is 1 and visited[k] is 0:
+					to_do_edge(w, k)
+					DFS(k, queue)
+	
+	visited = [0] * graph.num_vertices
+	queue = []
+	for i in range(graph.num_vertices):
+		if visited[i] is 0:
+			DFS(i, queue)
+
 
 
 if __name__ == '__main__':
-	# create_directed_matrix()
-	create_directed_graph_from_edges()
+	create_directed_matrix()
+	# create_directed_graph_from_edges()
+	
 
 # print (createList())
 # print ('-' * 80)
