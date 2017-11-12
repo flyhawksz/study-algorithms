@@ -7,31 +7,35 @@
 myTree = None
 
 
+class StackUnderflow(Exception):
+	pass
+
+
 class SStack():
 	"""
-    基于顺序表技术的栈类
-    采用list对象，_elems 存储栈中元素
-    所有栈操作映射到list操作
-    """
-	
+	基于顺序表技术的栈类
+	采用list对象，_elems 存储栈中元素
+	所有栈操作映射到list操作
+	"""
+
 	# noinspection InjectedReferences
 	def __init__(self):
 		"""
-        生成一个空表
-        """
+		生成一个空表
+		"""
 		self._elems = []
-	
+
 	def is_empty(self):
 		return self._elems == []
-	
+
 	def top(self):
 		if self._elems == []:
 			raise StackUnderflow("here")
 		return self._elems[-1]
-	
+
 	def push(self, elem):
 		self._elems.append(elem)
-	
+
 	def pop(self):
 		if self._elems == []:
 			raise StackUnderflow('')
@@ -58,10 +62,10 @@ class binaryTree:
 	traversal(self)   # 遍历二叉树节点迭代器
 	forall()
 	"""
-	
+
 	def __init__(self):
 		self.root = treeNode()
-	
+
 	def createTreeByInput(self, root):
 		"""
 		input with pre-order string, and it is easy change into other order
@@ -75,9 +79,9 @@ class binaryTree:
 			root = treeNode(rootObj=tmpKey)
 			root.leftChild = self.createTreeByInput(root.leftChild)
 			root.rightChild = self.createTreeByInput(root.rightChild)
-		
+
 		return root
-	
+
 	def createTreeByListWithRecursion(self, preOrderList):
 		"""
 		根据前序列表重建二叉树
@@ -95,7 +99,7 @@ class binaryTree:
 			root.leftChild = self.createTreeByListWithRecursion(preOrder)
 			root.rightChild = self.createTreeByListWithRecursion(preOrder)
 		return root
-	
+
 	def createTreeByListWithStack(self, preOrderList):
 		"""
 		根据前序列表重建二叉树
@@ -104,19 +108,19 @@ class binaryTree:
 		"""
 		preOrder = preOrderList
 		pStack = SStack()
-		
+
 		# check
 		if preOrder is None or len(preOrder) <= 0 or preOrder[0] is '#':
 			return None
-		
+
 		# get the root
 		tmpItem = preOrder.pop(0)
 		root = treeNode(tmpItem)
-		
+
 		# push root
 		pStack.push(root)
 		currentRoot = root
-		
+
 		while preOrder:
 			# get another item
 			tmpItem = preOrder.pop(0)
@@ -127,7 +131,7 @@ class binaryTree:
 					currentRoot = self.insertLeft(currentRoot, tmpItem)
 					pStack.push(currentRoot.leftChild)
 					currentRoot = currentRoot.leftChild
-				
+
 				# otherwise insert right child
 				elif currentRoot.rightChild is None:
 					currentRoot = self.insertRight(currentRoot, tmpItem)
@@ -138,7 +142,7 @@ class binaryTree:
 				# if has no left child
 				if currentRoot.leftChild is None:
 					currentRoot.leftChild = None
-					
+
 					# get another item fill right child
 					tmpItem = preOrder.pop(0)
 					# has right child
@@ -156,13 +160,13 @@ class binaryTree:
 							parent = pStack.pop()
 						# parent become current root
 						currentRoot = parent
-						
+
 						# return from right child, so the parent has right child, go to parent's parent
 						if currentRoot.rightChild is not None:
 							if not pStack.is_empty():
 								parent = pStack.pop()
 								currentRoot = parent
-				
+
 				# there is a leftchild ,fill right child with null and return to parent
 				else:
 					currentRoot.rightChild = None
@@ -171,9 +175,9 @@ class binaryTree:
 					if not pStack.is_empty():
 						parent = pStack.pop()
 					currentRoot = parent
-		
+
 		return root
-	
+
 	def createLevelOrderTreeWithQueue(self, levOder):
 		"""
 		:param root: a empty tree objedt
@@ -181,27 +185,27 @@ class binaryTree:
 		:return: tree
 		"""
 		root = treeNode()
-		
+
 		if len(levOder) < 1:
 			return None
-		
+
 		t = 0
 		myQueue = []
-		
+
 		currentRoot = root
 		myQueue.append(currentRoot)
 		while myQueue and t <= len(levOder) - 1:
 			currentRoot = myQueue.pop(0)
 			currentRoot.key = levOder[t]
 			t += 1
-			
+
 			if currentRoot.leftChild is None:
 				myQueue.append(self.insertLeft(currentRoot, None).leftChild)
 			if currentRoot.rightChild is None:
 				myQueue.append(self.insertRight(currentRoot, None).rightChild)
-		
+
 		return root
-	
+
 	def insertLeft(self, root, newNode):
 		if root.leftChild is None:
 			root.leftChild = treeNode(newNode)
@@ -209,9 +213,9 @@ class binaryTree:
 			tmpNode = treeNode(newNode)
 			tmpNode.leftChild = root.leftChild
 			root.leftChild = tmpNode
-		
+
 		return root
-	
+
 	def insertRight(self, root, newNode):
 		if root.rightChild is None:
 			root.rightChild = treeNode(newNode)
@@ -219,21 +223,21 @@ class binaryTree:
 			tmpNode = treeNode(newNode)
 			tmpNode.rightChild = root.rightChild
 			root.rightChild = tmpNode
-		
+
 		return root
-	
+
 	def isEmpty(self):
 		return self.key is None
-	
+
 	def setRootValue(self, obj):
 		self.key = obj
-	
+
 	def getRootValue(self):
 		return self.key
-	
+
 	def getLeftChild(self):
 		return self.leftChild
-	
+
 	def getRightChild(self):
 		return self.rightChild
 
@@ -242,7 +246,7 @@ def printBTree(self, bt, depth):
 	'''''
 	递归打印这棵二叉树，#号表示该节点为NULL
 	'''
-	
+
 	ch = bt.key if bt else '#'
 	if depth > 0:
 		print '%s%s%s' % ((depth - 1) * '  ', '--', ch)
@@ -265,13 +269,13 @@ def createTreeByMethod():
 	myTree.getRightChild().insertLeft('e')
 	myTree.getRightChild().insertRight('f')
 	myTree.getRightChild().getRightChild().getRootValue
-	
+
 	print(myTree.getLeftChild())
 	print(myTree.getLeftChild().getRootValue())
-	
+
 	print(myTree.getRightChild())
 	print(myTree.getRightChild().getRootValue())
-	
+
 	myTree.getLeftChild().setRootValue('hello')
 	print (myTree.getLeftChild().getRootValue())
 
@@ -330,7 +334,7 @@ def postorderTraversalWithRecursion(root):
 def preorderTraversalWithStack(root):
 	if root is None:
 		return
-	
+
 	myStack = []
 	while root or myStack:
 		# check left child
@@ -339,7 +343,7 @@ def preorderTraversalWithStack(root):
 			myStack.append(root)
 			root = root.leftChild
 		# finish check left child. left child is None, loop over
-		
+
 		# get parent
 		root = myStack.pop()
 		# check right child
@@ -361,7 +365,7 @@ def preorderTraversalWithStack2(root):
 def inorderTraversalWithStack(root):
 	if root is None:
 		return
-	
+
 	myStack = []
 	while root or myStack:
 		# check left sub-tree get the last child
@@ -369,8 +373,8 @@ def inorderTraversalWithStack(root):
 			myStack.append(root)
 			root = root.leftChild
 		# finish check left child. left child is None, loop over
-		
-		
+
+
 		# the last child is None , get parent
 		root = myStack.pop()
 		todo(root)
@@ -418,30 +422,30 @@ if __name__ == '__main__':
 	myTree = binaryTree()
 	treeElements = '124#8##5##369###7##'
 	# myTree = createTreeByListWithStack(myTree, treeElements )
-	
+
 	myTree = createTreeByListWithRecursion(myTree, treeElements)
-	
+
 	# myTree = createTreeByInput(myTree)
 	print ('*' * 80)
 	print ('pre-order Traversal')
 	preorderTraversalWithRecursion(myTree)
 	print ('-' * 80)
 	preorderTraversalWithStack(myTree)
-	
+
 	print ('*' * 80)
 	print ('in-order Traversal')
 	print ('*' * 80)
 	inorderTraversalWithRecursion(myTree)
 	print ('-' * 80)
 	inorderTraversalWithStack(myTree)
-	
+
 	print ('*' * 80)
 	print ('pos-order Traversal')
 	print ('*' * 80)
 	postorderTraversalWithRecursion(myTree)
 	print ('-' * 80)
 	postorderTraversalWithStack(myTree)
-	
+
 	print ('*' * 80)
 	print ('level-order Traversal')
 	print ('*' * 80)
