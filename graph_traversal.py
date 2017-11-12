@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Time    : 2017/11/6 23:32
-# @Author  : zhangqi
+# @Author  : flyhawk
 # @Site    : 
 # @File    : graph_traversal.py
 # @Software: PyCharm Community Edition

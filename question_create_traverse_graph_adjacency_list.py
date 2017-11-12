@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2017/11/2 22:35
-# @Author  : zhangqi
+# @Time    : 2017/11/12 23:58
+# @Author  : flyhawk
 # @Site    : 
-# @File    : Question_Graph_BFS.py
+# @File    : question_create_traverse_graph_adjacency_list.py
 # @Software: PyCharm Community Edition
+
 
 import matplotlib.pyplot as plt
 import networkx as nx

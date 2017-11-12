@@ -17,12 +17,18 @@ class BinHeap:
 	def insert(self, newItem):
 		self.heapList.append(newItem)
 		self.currentSize = self.currentSize + 1
+		# 拿最后一个数进行比较
 		self.percUp(self.currentSize)
 
+	# 向上比较并交换
 	def percUp(self, index):
+		# 存在2个数字以上
 		while index // 2 > 0:
+			# 与父节点比较
 			if self.heapList[index] < self.heapList[index//2]:
-				self.heapList[index] , self.heapList[index // 2] = self.heapList[index//2], self.heapList[index]
+				# 交换父子节点
+				self.heapList[index], self.heapList[index // 2] = self.heapList[index//2], self.heapList[index]
+				# 序号切换到交换后的父节点
 				index = index // 2
 			# if more than parent ,quit
 			else:
@@ -121,4 +127,5 @@ def createHeapByList():
 
 
 if __name__ == '__main__':
-	createHeapByList()
+	# createHeapByList()
+	createHeapByInsert()
