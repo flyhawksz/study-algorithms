@@ -98,35 +98,7 @@ def create_directed_graph_from_edges(my_graph):
 
 	return my_graph
 
-def draw_undircted_graph(my_graph):
-	G = nx.Graph()  # 建立一个空的无向图G
-	for node in my_graph.vertices:
-		G.add_node(str(node))
-	for edge in my_graph.edges:
-		G.add_edge(str(edge[0]), str(edge[1]))
 
-	print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
-	print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
-	print("number of edges:", G.number_of_edges())  # 输出边的数量：1
-	nx.draw(G, with_labels=True)
-	plt.savefig("undirected_graph.png")
-	plt.show()
-
-
-def draw_directed_graph(my_graph):
-	G = nx.DiGraph()  # 建立一个空的无向图G
-	for node in my_graph.vertices:
-		G.add_node(str(node))
-	# for edge in my_graph.edges:
-	# G.add_edge(str(edge[0]), str(edge[1]))
-	G.add_weighted_edges_from(my_graph.edges_array)
-
-	print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
-	print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
-	print("number of edges:", G.number_of_edges())  # 输出边的数量：1
-	nx.draw(G, with_labels=True)
-	plt.savefig("directed_graph.png")
-	plt.show()
 
 
 # def dfs_visit(self, numCourses, prerequisites):
@@ -349,7 +321,7 @@ if __name__ == '__main__':
 	# my_graph.DepthFirstSearch()
 
 	# draw_undircted_graph(created_graph)
-	draw_directed_graph(created_graph)
+	created_graph.draw_directed_graph()
 
 
 

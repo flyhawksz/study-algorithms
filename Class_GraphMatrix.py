@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 
-class Graph_Matrix:
+class GraphMatrix:
 	"""
 	Adjacency Matrix
 	"""
@@ -144,6 +144,35 @@ class Graph_Matrix:
 			if visited[i] is 0:
 				DFS(self, i, queue)
 
+	def draw_undirected_graph(self):
+		G = nx.Graph()  # 建立一个空的无向图G
+		for node in self.vertices:
+			G.add_node(str(node))
+		for edge in self.edges:
+			G.add_edge(str(edge[0]), str(edge[1]))
+
+		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
+		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
+		print("number of edges:", G.number_of_edges())  # 输出边的数量：1
+		nx.draw(G, with_labels=True)
+		plt.savefig("undirected_graph.png")
+		plt.show()
+
+	def draw_directed_graph(self):
+		G = nx.DiGraph()  # 建立一个空的无向图G
+		for node in self.vertices:
+			G.add_node(str(node))
+		# for edge in my_graph.edges:
+		# G.add_edge(str(edge[0]), str(edge[1]))
+		G.add_weighted_edges_from(self.edges_array)
+
+		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
+		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
+		print("number of edges:", G.number_of_edges())  # 输出边的数量：1
+		nx.draw(G, with_labels=True)
+		plt.savefig("directed_graph.png")
+		plt.show()
+
 
 def create_undirected_matrix(my_graph):
 	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -208,37 +237,6 @@ def create_directed_graph_from_edges(my_graph):
 
 	return my_graph
 
-def draw_undircted_graph(my_graph):
-	G = nx.Graph()  # 建立一个空的无向图G
-	for node in my_graph.vertices:
-		G.add_node(str(node))
-	for edge in my_graph.edges:
-		G.add_edge(str(edge[0]), str(edge[1]))
-
-	print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
-	print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
-	print("number of edges:", G.number_of_edges())  # 输出边的数量：1
-	nx.draw(G, with_labels=True)
-	plt.savefig("undirected_graph.png")
-	plt.show()
-
-
-def draw_directed_graph(my_graph):
-	G = nx.DiGraph()  # 建立一个空的无向图G
-	for node in my_graph.vertices:
-		G.add_node(str(node))
-	# for edge in my_graph.edges:
-	# G.add_edge(str(edge[0]), str(edge[1]))
-	G.add_weighted_edges_from(my_graph.edges_array)
-
-	print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
-	print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
-	print("number of edges:", G.number_of_edges())  # 输出边的数量：1
-	nx.draw(G, with_labels=True)
-	plt.savefig("directed_graph.png")
-	plt.show()
-
-
 if __name__ == '__main__':
 	my_graph = Graph_Matrix()
 	# created_graph = create_undirected_matrix(my_graph)
@@ -247,5 +245,5 @@ if __name__ == '__main__':
 
 	# my_graph.DepthFirstSearch()
 
-	# draw_undircted_graph(created_graph)
-	draw_directed_graph(created_graph)
+	# created_graph.draw_undirected_graph()
+	created_graph.draw_directed_graph()
