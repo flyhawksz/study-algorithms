@@ -104,7 +104,7 @@ class GraphAdjacencyList:
 			G.add_node(str(node))
 		# for edge in my_graph.edges:
 		# G.add_edge(str(edge[0]), str(edge[1]))
-		G.add_weighted_edges_from(self.edges_list)
+		G.add_weighted_edges_from(self.edges_array)
 
 		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
 		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
