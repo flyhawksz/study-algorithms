@@ -14,12 +14,13 @@ class Vertex:
 	def __init__(self, key):
 		self.id = key
 		self.neighbors = {}
+		self.visited = False
 
 	def add_neighbor(self, nbr, weight=0):
 		self.neighbors[nbr] = weight
 
-	def __str__(self):
-		return self.id + 'connect to ' + str([v.id for v in self.neighbors])
+	# def __str__(self):
+	# 	return self.id + 'connect to ' + str([v.id for v in self.neighbors])
 
 	def get_neighbors(self):
 		# return the keys of a dictionary
@@ -31,17 +32,17 @@ class Vertex:
 	def get_weight(self, nbr):
 		return self.neighbors[nbr]
 
-	def __repr__(self):
-		return str(self.neighbors)
+	# def __repr__(self):
+	# 	return str(self.neighbors)
 
 
 class GraphAdjacencyList:
 	def __init__(self):
 		self.vertices_list = {}
 		self.edges_list = {}
-		self.edges_array = []  # (tail, head, weight) for networkX to draw graph
+		# self.edges_array = []  # (tail, head, weight) for networkX to draw graph
 		self.num_vertices = 0
-
+		self.num_edges = 0
 
 	def add_vertex(self, key):
 		new_vertex = Vertex(key)
@@ -58,16 +59,20 @@ class GraphAdjacencyList:
 	def __contains__(self, n):
 		return n in self.vertices_list
 
-	def add_edge(self, from_vertex, to_vertex, cost=0):
-		if from_vertex not in self.vertices_list:
-			nv = self.add_vertex(from_vertex)
-		if to_vertex not in self.vertices_list:
-			nv = self.add_vertex(to_vertex)
+	def add_edge(self, tail, head, cost=0):
+		if tail not in self.vertices_list:
+			nv = self.add_vertex(tail)
+		if head not in self.vertices_list:
+			nv = self.add_vertex(head)
 
-		if (from_vertex, to_vertex) not in self.edges_list:
-			self.edges_list[(from_vertex, to_vertex)] = cost
+		if (tail, head) not in self.edges_list:
+			self.edges_list[(tail, head)] = cost
 
-		self.vertices_list[from_vertex].add_neighbor(self.vertices_list[to_vertex], cost)
+		self.vertices_list[tail].add_neighbor(self.vertices_list[head], cost)
+		
+		# build edges array for networkX draw graph
+		# self.edges_array.append((tail, head, cost))
+		self.num_edges = len(self.edges_list)
 
 	def get_vertices(self):
 		return self.vertices_list
@@ -102,9 +107,10 @@ class GraphAdjacencyList:
 		G = nx.DiGraph()  # 建立一个空的无向图G
 		for node in self.vertices_list:
 			G.add_node(str(node))
-		# for edge in my_graph.edges:
-		# G.add_edge(str(edge[0]), str(edge[1]))
-		G.add_weighted_edges_from(self.edges_array)
+		for _edge, _weight in self.edges_list.items():
+			G.add_edge(str(_edge[0]), str(_edge[1]), weight=_weight)
+
+		# G.add_weighted_edges_from(self.edges_array)
 
 		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
 		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
@@ -113,10 +119,11 @@ class GraphAdjacencyList:
 		plt.savefig("directed_graph.png")
 		plt.show()
 
-
-
-
-
+	def reset_all_vertices_unvisited(self):
+		for vertex in self.vertices_list:
+			self.vertices_list[vertex].visited = False
+	
+	
 if __name__ == '__main__':
 	g = GraphAdjacencyList()
 	for i in range(6):
@@ -132,8 +139,13 @@ if __name__ == '__main__':
 	g.add_edge(5, 4, 8)
 	g.add_edge(5, 2, 1)
 
+	g.draw_directed_graph()
+	
+	# _v=g.get_vertex(2)
+	# print (_v)
+	
 	for v in g:
-		for w in v.get_connections():
+		for w in v.get_neighbors():
 			print("( %s , %s )" % (v.get_Id(), w.get_Id()))  # v.connectTo.keys()[0].id to check id
 
 

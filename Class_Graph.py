@@ -6,7 +6,8 @@
 
 import sys
 import os
-
+import matplotlib.pyplot as plt
+import networkx as nx
 
 class Vertex:
 	def __init__(self, num):
@@ -92,67 +93,98 @@ class Vertex1:
 	
 class Graph:
 	def __init__(self):
-		self.vertexList = {}
-		self.edgesList = {}
-		self.numVertices = 0
+		self.vertices_list = {}
+		self.edges_list = {}
+		self.num_vertices = 0
 		
-	def addVertex(self, key):
+	def add_vertex(self, key):
 		newVertex = Vertex(key)
-		self.vertexList[key] = newVertex
-		self.numVertices += 1
+		self.vertices_list[key] = newVertex
+		self.num_vertices += 1
 		return newVertex
 
-	def getVertex(self, n):
-		if n in self.vertexList:
-			return self.vertexList[n]
+	def get_vertex(self, n):
+		if n in self.vertices_list:
+			return self.vertices_list[n]
 		else:
 			return None
 
 	def __contains__(self, n):
-		return n in self.vertexList
+		return n in self.vertices_list
 	
-	def addEdge(self, fromV , toV, cost=0):
-		if fromV not in self.vertexList:
-			nv = self.addVertex(fromV)
-		if toV not in self.vertexList:
-			nv = self.addVertex(toV)
+	def add_edge(self, fromV , toV, cost=0):
+		if fromV not in self.vertices_list:
+			nv = self.add_vertex(fromV)
+		if toV not in self.vertices_list:
+			nv = self.add_vertex(toV)
 
-		if (fromV, toV) not in self.edgesList:
-			self.edgesList[(fromV, toV)] = cost
+		if (fromV, toV) not in self.edges_list:
+			self.edges_list[(fromV, toV)] = cost
 
-		self.vertexList[fromV].addNeighbor(self.vertexList[toV], cost)
+		self.vertices_list[fromV].addNeighbor(self.vertices_list[toV], cost)
 		
-	def getVertices(self):
-		return self.vertexList
+	def get_vertices(self):
+		return self.vertices_list
 	
 	def __iter__(self):
-		return iter(self.vertexList.values())
+		return iter(self.vertices_list.values())
 	
-	def verticesNumber(self):
-		return self.numVertices
+	def vertices_number(self):
+		return self.num_vertices
 	
 	def edgesNumber(self):
 		pass
 	
-	def isEmpty(self):
-		return self.numVertices == 0
+	def is_nmpty(self):
+		return self.num_vertices == 0
+
+	def draw_undirected_graph(self):
+		G = nx.Graph()  # 建立一个空的无向图G
+		for node in self.vertices:
+			G.add_node(str(node))
+		for edge in self.edges:
+			G.add_edge(str(edge[0]), str(edge[1]))
+
+		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
+		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
+		print("number of edges:", G.number_of_edges())  # 输出边的数量：1
+		nx.draw(G, with_labels=True)
+		plt.savefig("undirected_graph.png")
+		plt.show()
+
+	def draw_directed_graph(self):
+		G = nx.DiGraph()  # 建立一个空的无向图G
+		for node in self.vertices_list:
+			G.add_node(str(node))
+		# for edge in my_graph.edges:
+		# G.add_edge(str(edge[0]), str(edge[1]))
+		G.add_weighted_edges_from(self.edges_array)
+
+		print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
+		print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
+		print("number of edges:", G.number_of_edges())  # 输出边的数量：1
+		nx.draw(G, with_labels=True)
+		plt.savefig("directed_graph.png")
+		plt.show()
 
 
 if __name__ == '__main__':
 	g = Graph()
 	for i in range(6):
-		g.addVertex(i)
+		g.add_vertex(i)
 	
-	g.addEdge(0, 1, 5)
-	g.addEdge(0, 5, 2)
-	g.addEdge(1, 2, 4)
-	g.addEdge(2, 3, 9)
-	g.addEdge(3, 4, 7)
-	g.addEdge(3, 5, 3)
-	g.addEdge(4, 0, 1)
-	g.addEdge(5, 4, 8)
-	g.addEdge(5, 2, 1)
+	g.add_edge(0, 1, 5)
+	g.add_edge(0, 5, 2)
+	g.add_edge(1, 2, 4)
+	g.add_edge(2, 3, 9)
+	g.add_edge(3, 4, 7)
+	g.add_edge(3, 5, 3)
+	g.add_edge(4, 0, 1)
+	g.add_edge(5, 4, 8)
+	g.add_edge(5, 2, 1)
 
+	g.draw_directed_graph()
+	
 	for v in g:
 		for w in v.getConnections():
 			print("( %s , %s )" % (v.getId(), w.getId()))  # v.connectTo.keys()[0].id to check id

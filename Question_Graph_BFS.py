@@ -8,8 +8,9 @@
 
 import matplotlib.pyplot as plt
 import networkx as nx
-from class_graph_adjacency_list import GraphAdjacencyList
+# from class_graph_adjacency_list import GraphAdjacencyList
 from Class_Queue import Queue
+from Class_Graph import Graph
 
 
 
@@ -78,7 +79,7 @@ def bfs(g, start):
 
 def buildGraph(wordFile):
 	d = {}
-	g = GraphAdjacencyList()
+	g = Graph()
 	wfile = file(wordFile, 'r')
 	# create buckets of words that differ by one letter
 	for line in wfile:
@@ -129,10 +130,10 @@ def draw2(myGraph):
 
 def draw3(myGraph):
 	G = nx.DiGraph()                 #建立一个空的无向图G
-	for node in myGraph.vertexList:
+	for node in myGraph.vertices_list:
 		G.add_node(str(node))
-	for edge in myGraph.edgesList:
-		G.add_edge(str(edge[0]), str(edge[1]))
+	for _edge, _weight in myGraph.edges_list.items():
+		G.add_edge(str(_edge[0]), str(_edge[1]), weight=_weight)
 
 	print( "nodes:", G.nodes())      #输出全部的节点： [1, 2, 3]
 	print( "edges:", G.edges())      #输出全部的边：[(2, 3)]
@@ -143,24 +144,25 @@ def draw3(myGraph):
 
 
 if __name__ == '__main__':
-	g = GraphAdjacencyList()
+	g = Graph()
 
-	g = buildGraph('e:\\fourletterwords2.txt')
+	# g = buildGraph('e:\\fourletterwords2.txt')
+	
 	# bfs(g, g.getVertex('BOSS'))
 	# dfs(g, g.getVertex('BOSS'))
 	# traverse(g.getVertex('SAGE'))
 
-	# g.addEdge(0, 1, 5)
-	# g.addEdge(0, 5, 2)
-	# g.addEdge(1, 2, 4)
-	# g.addEdge(2, 3, 9)
-	# g.addEdge(3, 4, 7)
-	# g.addEdge(3, 5, 3)
-	# g.addEdge(4, 0, 1)
-	# g.addEdge(5, 4, 8)
-	# g.addEdge(5, 2, 1)
+	g.add_edge(0, 1, 5)
+	g.add_edge(0, 5, 2)
+	g.add_edge(1, 2, 4)
+	g.add_edge(2, 3, 9)
+	g.add_edge(3, 4, 7)
+	g.add_edge(3, 5, 3)
+	g.add_edge(4, 0, 1)
+	g.add_edge(5, 4, 8)
+	g.add_edge(5, 2, 1)
 
-	draw2(g)
+	draw3(g)
 	# bfs(g, g.getVertex(2))
 
 	# traverse(g.getVertex(1))
