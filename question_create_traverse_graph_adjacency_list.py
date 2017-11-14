@@ -10,11 +10,11 @@
 from __future__ import print_function
 from class_graph_adjacency_list import GraphAdjacencyList
 from Class_Queue import Queue
+from Class_SStack import SStack
 
 
 def deep_first_search(graph, start_v=None, end_v=None):
 
-	
 	def to_do_vertex(vertex):
 		print('visited vertex: %s' % vertex.id)
 
@@ -43,27 +43,61 @@ def deep_first_search(graph, start_v=None, end_v=None):
 			if not v.visited:
 				dfs_recursion(graph, v, end_v)
 		
-	find_path = False
 	def dfs_search_recursion(graph, start_v, end_v):
-		global find_path
 		# deal with the visited vertex
 		to_do_vertex(start_v)
 		# print('visited vertex: %s' % start_v.id)
 		start_v.visited = True
 		visited_order.append(start_v.id)
 		for v in start_v.neighbors:
-			if not find_path:
+			if v is end_v:
+				visited_order.append(v.id)
+				print ('arrive at: %s' % v.id)
+				print('find the path to %s' % end_v.id)
+				return
+			elif not v.visited:
+				dfs_search_recursion(graph, v, end_v)
+
+	def dfs_search_stack(graph, start_v, end_v):
+		def get_first_adjacent_vertex(current_vertex):
+			"""
+			get current vertex first adjacent vertex
+			:param graph:
+			:param current_vertex_index:
+			:return: if has return the index. otherwise return None
+			"""
+			for v in current_vertex.neighbors:
+				if not v.visited:
+					return v
+			return None
+
+		my_stack = SStack()
+		# deal with the visited vertex
+		to_do_vertex(start_v)
+		# print('visited vertex: %s' % start_v.id)
+		start_v.visited = True
+		my_stack.push(start_v)
+		visited_order.append(start_v.id)
+
+		while not my_stack.is_empty():
+			v = get_first_adjacent_vertex(my_stack.top())
+			if v:
+				v.visited = True
+				visited_order.append(v.id)
+				to_do_vertex(v)
+
 				if v is end_v:
 					visited_order.append(v.id)
-					find_path = True
-					print ('arrive at: %s' % v.id)
+					print('arrive at: %s' % v.id)
 					print('find the path to %s' % end_v.id)
 					return
-				elif not v.visited:
-					dfs_search_recursion(graph, v, end_v)
-		
-	visited_order = []
 
+				my_stack.push(v)
+
+			else:
+				my_stack.pop()
+
+	visited_order = []
 
 	if start_v and end_v:
 		if start_v not in graph.vertices_list:
@@ -74,7 +108,11 @@ def deep_first_search(graph, start_v=None, end_v=None):
 			print('%s is not in this graph' % end_v)
 			return False
 			
-		dfs_search_recursion(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
+		# dfs_search_recursion(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
+
+		# print ('-'*100)
+		# visited_order = []
+		dfs_search_stack(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
 		
 	elif start_v:
 		if start_v not in graph.vertices_list:
@@ -98,8 +136,6 @@ def deep_first_search(graph, start_v=None, end_v=None):
 	# dfs_stack(graph, start_v, end_v, my_stack)
 
 
-
-
 if __name__ == '__main__':
 	g = GraphAdjacencyList()
 
@@ -115,12 +151,12 @@ if __name__ == '__main__':
 
 	# g.draw_directed_graph()
 	
-	print(deep_first_search(g))
-	
-	print ('-'*100)
-	g.reset_all_vertices_unvisited()
-	print(deep_first_search(g, 4))
-	
+	# print(deep_first_search(g))
+	#
+	# print ('-'*100)
+	# g.reset_all_vertices_unvisited()
+	# print(deep_first_search(g, 4))
+	#
 	print ('-'*100)
 	g.reset_all_vertices_unvisited()
 	print(deep_first_search(g, 4, 2))

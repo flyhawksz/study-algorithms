@@ -9,7 +9,7 @@
 import random
 import matplotlib.pyplot as plt
 import networkx as nx
-from Class_GraphMatrix import Graph_Matrix
+from Class_GraphMatrix import GraphMatrix
 from Class_SStack import SStack
 from Class_Queue import Queue
 
@@ -71,7 +71,7 @@ def create_directed_matrix(my_graph):
 			  [inf, inf, inf, inf, inf, 1, 0, 6],  # g
 			  [inf, inf, inf, inf, inf, 9, 8, 0]]  # h
 
-	my_graph = Graph_Matrix(nodes, matrix)
+	my_graph = GraphMatrix(nodes, matrix)
 	print(my_graph)
 	return my_graph
 
@@ -185,13 +185,13 @@ def dfs_search(graph, start_v, end_v):
 		return False
 
 	# dfs method 2 use stack
-	def dfs_stack(graph, start_v, end_v, my_stack):  # with stack
+	def dfs_stack(graph, start_v, end_v):  # with stack
 		# 深度优先搜索
 		# 深度优先搜索要得到距离起始点最远的顶点，然后不能继续前进的时候返回
 		# 规则1：如果可能，访问一个邻接的未访问顶点，标记它，并把它放入栈中
 		# 规则2：当不能执行规则1时，如果栈不空，就从栈中弹出一个顶点
 		# 规则3：如果不能执行规则1和规则2，就完成了整个搜索过程
-
+		my_stack = SStack()
 		current_vertex_index = graph.vertices.index(start_v)
 		# marked with visited
 		visited[current_vertex_index] = True
@@ -256,8 +256,8 @@ def dfs_search(graph, start_v, end_v):
 
 	# try dfs by stack method
 	visited = [False] * graph.num_vertices
-	my_stack = SStack()
-	dfs_stack(graph, start_v, end_v, my_stack)
+
+	dfs_stack(graph, start_v, end_v)
 
 
 def bfs_search(graph, start_v, end_v):
@@ -313,7 +313,7 @@ def bfs_search(graph, start_v, end_v):
 	bfs_queue(graph, start_v, end_v)
 
 if __name__ == '__main__':
-	my_graph = Graph_Matrix()
+	my_graph = GraphMatrix()
 	# created_graph = create_undirected_matrix(my_graph)
 	created_graph = create_directed_matrix(my_graph)
 	# created_graph = create_directed_graph_from_edges(my_graph)
