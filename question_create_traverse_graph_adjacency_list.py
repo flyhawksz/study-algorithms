@@ -107,11 +107,17 @@ def deep_first_search(graph, start_v=None, end_v=None):
 		if end_v not in graph.vertices_list:
 			print('%s is not in this graph' % end_v)
 			return False
-			
-		# dfs_search_recursion(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
 
-		# print ('-'*100)
-		# visited_order = []
+		print ('*'*100)
+		print ('dfs_search_recurse')
+		print ('*'*100)
+		dfs_search_recursion(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
+
+		print ('*'*100)
+		print ('dfs_search_stack')
+		print ('*'*100)
+		graph.reset_all_vertices_unvisited()
+		visited_order = []
 		dfs_search_stack(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
 		
 	elif start_v:
@@ -149,14 +155,23 @@ if __name__ == '__main__':
 	g.add_edge(5, 4, 8)
 	g.add_edge(5, 2, 1)
 
-	# g.draw_directed_graph()
-	
-	# print(deep_first_search(g))
-	#
-	# print ('-'*100)
-	# g.reset_all_vertices_unvisited()
-	# print(deep_first_search(g, 4))
-	#
+	g.draw_directed_graph()
+
+	# traverse graph
+	print ('-'*100)
+	print ('traverse graph')
+	print ('-'*100)
+	print(deep_first_search(g))
+
+	# traverse grapth with a start
+	print ('-'*100)
+	print ('traverse grapth with a start')
+	print ('-'*100)
+	g.reset_all_vertices_unvisited()
+	print(deep_first_search(g, 4))
+
+	print ('-'*100)
+	print ('search grapth with start and end')
 	print ('-'*100)
 	g.reset_all_vertices_unvisited()
 	print(deep_first_search(g, 4, 2))
