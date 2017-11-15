@@ -126,7 +126,7 @@ def deep_first_search(graph, start_v=None, end_v=None):
 	return visited_order
 
 
-def broad_first_search(graph, start_v=None, end_v=None):
+def breadth_first_search(graph, start_v=None, end_v=None):
 	def to_do_vertex(vertex):
 		visited_order.append(vertex.id)
 		print('visited vertex: %s' % vertex.id)

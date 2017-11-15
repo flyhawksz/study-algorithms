@@ -7,8 +7,6 @@
 # @Software: PyCharm Community Edition
 
 import random
-import matplotlib.pyplot as plt
-import networkx as nx
 from Class_GraphMatrix import GraphMatrix
 from Class_SStack import SStack
 from Class_Queue import Queue
@@ -50,7 +48,7 @@ def create_undirected_matrix(my_graph):
 	# N[a][b]
 	# 1
 	# sum(N[f]))
-	my_graph = Graph_Matrix(nodes, matrix)
+	my_graph = GraphMatrix(nodes, matrix)
 	print(my_graph)
 
 	# my_graph.DepthFirstSearch()
@@ -58,6 +56,7 @@ def create_undirected_matrix(my_graph):
 	# draw_undircted_graph(my_graph)
 
 	return my_graph
+
 
 def create_directed_matrix(my_graph):
 	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -75,12 +74,6 @@ def create_directed_matrix(my_graph):
 	print(my_graph)
 	return my_graph
 
-	# w[a][b]
-	# 2
-	# w[c][e]<inf
-	# False
-	# sum(1 for w in w[a] if w<inf)-1
-
 
 def create_directed_graph_from_edges(my_graph):
 	nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
@@ -88,7 +81,7 @@ def create_directed_graph_from_edges(my_graph):
 				 ('G', 'F', 3), ('G', 'E', 12), ('G', 'C', 10), ('C', 'E', 1),
 				 ('E', 'D', 7)]
 
-	my_graph = Graph_Matrix(nodes)
+	my_graph = GraphMatrix(nodes)
 	my_graph.add_edges_from_list(edge_list)
 	print(my_graph)
 
