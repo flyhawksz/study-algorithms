@@ -16,6 +16,7 @@ from Class_SStack import SStack
 def deep_first_search(graph, start_v=None, end_v=None):
 
 	def to_do_vertex(vertex):
+		visited_order.append(vertex.id)
 		print('visited vertex: %s' % vertex.id)
 
 	def dfs_recursion(graph, start_v, end_v=None):
@@ -38,7 +39,6 @@ def deep_first_search(graph, start_v=None, end_v=None):
 		to_do_vertex(start_v)
 		# print('visited vertex: %s' % start_v.id)
 		start_v.visited = True
-		visited_order.append(start_v.id)
 		for v in start_v.neighbors:
 			if not v.visited:
 				dfs_recursion(graph, v, end_v)
@@ -48,25 +48,23 @@ def deep_first_search(graph, start_v=None, end_v=None):
 		to_do_vertex(start_v)
 		# print('visited vertex: %s' % start_v.id)
 		start_v.visited = True
-		visited_order.append(start_v.id)
 		for v in start_v.neighbors:
-			if v is end_v:
-				visited_order.append(v.id)
-				print ('arrive at: %s' % v.id)
-				print('find the path to %s' % end_v.id)
+			if (v is end_v) and not v.visited:
+				to_do_vertex(v)
+				print ('find the path and arrive at: %s' % v.id)
 				return
 			elif not v.visited:
 				dfs_search_recursion(graph, v, end_v)
 
 	def dfs_search_stack(graph, start_v, end_v):
-		def get_first_adjacent_vertex(current_vertex):
+		def get_first_adjacent_vertex(_vertex):
 			"""
 			get current vertex first adjacent vertex
 			:param graph:
 			:param current_vertex_index:
 			:return: if has return the index. otherwise return None
 			"""
-			for v in current_vertex.neighbors:
+			for v in _vertex.neighbors:
 				if not v.visited:
 					return v
 			return None
@@ -77,19 +75,13 @@ def deep_first_search(graph, start_v=None, end_v=None):
 		# print('visited vertex: %s' % start_v.id)
 		start_v.visited = True
 		my_stack.push(start_v)
-		visited_order.append(start_v.id)
-
 		while not my_stack.is_empty():
 			v = get_first_adjacent_vertex(my_stack.top())
 			if v:
 				v.visited = True
-				visited_order.append(v.id)
 				to_do_vertex(v)
-
 				if v is end_v:
-					visited_order.append(v.id)
-					print('arrive at: %s' % v.id)
-					print('find the path to %s' % end_v.id)
+					print('find the path and arrive at: %s' % v.id)
 					return
 
 				my_stack.push(v)
@@ -134,12 +126,46 @@ def deep_first_search(graph, start_v=None, end_v=None):
 	return visited_order
 
 
-	# print ('-'*100)
-	#
-	# # try dfs by stack method
-	# visited = [False] * graph.num_vertices
-	# my_stack = SStack()
-	# dfs_stack(graph, start_v, end_v, my_stack)
+def broad_first_search(graph, start_v=None, end_v=None):
+	def to_do_vertex(vertex):
+		visited_order.append(vertex.id)
+		print('visited vertex: %s' % vertex.id)
+	
+	def bfs_queue(graph, start_v, end_v=None):
+		my_queue = Queue()
+		to_do_vertex(start_v)
+		start_v.visited = True
+		my_queue.enqueue(start_v)
+		while not my_queue.isempty():
+			current_vertex = my_queue.dequeue()
+			for v in current_vertex.neighbors:
+				if not v.visited:
+					if v is end_v:
+						to_do_vertex(v)
+						print('find the path and arrive at: %s' % v.id)
+						return
+					else:
+						to_do_vertex(v)
+						v.visited = True
+						my_queue.enqueue(v)
+	
+	visited_order = []
+	
+	if start_v and end_v:
+		if start_v not in graph.vertices_list:
+			print('%s is not in this graph' % start_v)
+			return False
+
+		if end_v not in graph.vertices_list:
+			print('%s is not in this graph' % end_v)
+			return False
+
+		print ('*'*100)
+		print ('dfs_search_queue')
+		print ('*'*100)
+		bfs_queue(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
+		
+	return visited_order
 
 
 if __name__ == '__main__':
@@ -170,11 +196,18 @@ if __name__ == '__main__':
 	g.reset_all_vertices_unvisited()
 	print(deep_first_search(g, 4))
 
+	# traverse grapth with a start
 	print ('-'*100)
 	print ('search grapth with start and end')
 	print ('-'*100)
 	g.reset_all_vertices_unvisited()
 	print(deep_first_search(g, 4, 2))
+
+	print ('+'*100)
+	print ('search grapth with start and end')
+	print ('+'*100)
+	g.reset_all_vertices_unvisited()
+	print(broad_first_search(g, 4, 2))
 	
 	# traverse(g.getVertex(1))
 	# print('-'*80)
