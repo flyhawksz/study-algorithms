@@ -7,7 +7,7 @@
 # 迷宫ADT
 
 from myarray2d import Array2D
-from lliststack import Stack
+from Class_LStack import LStack
 
 
 class Maze(object):
