@@ -207,7 +207,7 @@ if __name__ == '__main__':
 	print ('search grapth with start and end')
 	print ('+'*100)
 	g.reset_all_vertices_unvisited()
-	print(broad_first_search(g, 4, 2))
+	print(breadth_first_search(g, 4, 2))
 	
 	# traverse(g.getVertex(1))
 	# print('-'*80)

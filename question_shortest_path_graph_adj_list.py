@@ -28,9 +28,13 @@ def shortest_path_unweighted_graph_adjacency_list(graph, start_v, end_v):
 
 	my_queue = Queue()
 	to_do_vertex(start_v)
+	# mark
 	start_v.visited = True
+	# enqueue
 	my_queue.enqueue(start_v)
+	# traverse
 	while not my_queue.isempty():
+		
 		current_vertex = my_queue.dequeue()
 		for v in current_vertex.neighbors:
 			if not v.visited:

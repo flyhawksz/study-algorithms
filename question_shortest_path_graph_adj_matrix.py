@@ -25,7 +25,7 @@ def create_undirected_matrix(my_graph):
 	# N[a][b]
 	# 1
 	# sum(N[f]))
-	my_graph = Graph_Matrix(nodes, matrix)
+	my_graph = GraphMatrix(nodes, matrix)
 	print(my_graph)
 
 	# my_graph.DepthFirstSearch()
@@ -70,13 +70,19 @@ def create_directed_graph_from_edges(my_graph):
 
 
 def bfs_queue(graph, start_v, end_v):
-	def to_do_vertex(vertex):
-		visited_order.append(vertex.id)
-		print('visited vertex: %s' % vertex.id)
+	def to_do_vertex(graph, vertex_index):
+		visited_order.append(graph.vertices[vertex_index])
+		print('visited vertex: %s' % graph.vertices[vertex_index])
 
 	my_queue = Queue()
+	# the distance from start vertex to current vertex
+	distance = [0] * graph.num_vertices
+	# the previous vertex that come to current vertex
+	previous_vertex = [None] * graph.num_vertices
 
 	current_vertex_index = graph.vertices.index(start_v)
+	# set the start vertex distance as 0
+	distance[current_vertex_index] = 0
 	# marked with visited
 	visited[current_vertex_index] = True
 	# deal with the vertex
@@ -90,6 +96,10 @@ def bfs_queue(graph, start_v, end_v):
 		# find all the adjacent vertices
 		for i in range(graph.num_vertices):
 			if (0 < graph.matrix[current_vertex_index][i] < inf) and (visited[i] is False):
+				# calculate the distance
+				distance[i] = distance[current_vertex_index] + 1
+				# mark the previous
+				previous_vertex[i] = current_vertex_index
 				# deal with the vertex
 				to_do_vertex(graph, i)
 				# mark the vertex
@@ -97,7 +107,7 @@ def bfs_queue(graph, start_v, end_v):
 				# check whether come to the end
 				if graph.vertices[i] is end_v:
 					print('find the path from %s to %s' % (start_v, end_v))
-					return True
+					return distance, previous_vertex, visited_order
 
 				# enqueue the element
 				my_queue.enqueue(i)
@@ -107,19 +117,31 @@ def bfs_queue(graph, start_v, end_v):
 
 
 if __name__ == '__main__':
-	my_graph = GraphMatrix()
-	# created_graph = create_undirected_matrix(my_graph)
-	# created_graph = create_directed_matrix(my_graph)
-	created_graph = create_directed_graph_from_edges(my_graph)
+	_graph = GraphMatrix()
+	# g = create_undirected_matrix(_graph)
+	g = create_directed_matrix(_graph)
+	# g = create_directed_graph_from_edges(_graph)
+	
+	# created_graph.draw_directed_graph()
 
-	my_graph.draw_directed_graph()
-
-	start_v = 'A'
-	end_v = 'D'
+	start_v = 'a'
+	end_v = 'h'
 
 	inf = float('inf')
-	visited = [False] * my_graph.num_vertices
+	visited = [False] * g.num_vertices
 	visited_order = []
 
-	bfs_queue(my_graph, start_v, end_v)
+	# shortest path for graph adjacency matrix
+	print ('-'*100)
+	print ('traverse graph')
+	print ('-'*100)
+	dist, pre_v, visited = bfs_queue(g, start_v, end_v)
+	print ('the distance from %s to %s is %s: ' % (start_v, end_v, dist[g.vertices.index(end_v)]))
 
+	_v = g.vertices.index(end_v)
+	print(g.vertices[_v])
+	while not pre_v[_v] is None:
+		# if pre_v[_v]:
+		v = pre_v[_v]
+		print (g.vertices[v])
+		_v = v
