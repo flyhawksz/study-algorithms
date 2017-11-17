@@ -5,7 +5,6 @@
 # @Software: PyCharm Community Edition
 
 import random
-from Class_BinaryTree import binaryTree
 
 
 class PriorityQueueForTuple:
@@ -14,6 +13,11 @@ class PriorityQueueForTuple:
 		self.currentSize = 0
 	
 	def insert(self, newItem):
+		"""
+		add new item,
+		:param newItem: (priority, key) ,such as (1, 'a')
+		:return:
+		"""
 		self.heap_array.append(newItem)
 		self.currentSize = self.currentSize + 1
 		# 拿最后一个数进行比较
@@ -66,8 +70,8 @@ class PriorityQueueForTuple:
 	#
 	def buildHeapWithList(self, alist):
 		"""
-		
-		:param alist: alist such as [(a, b), ()...]
+		build a heap with list
+		:param alist: alist such as [(0, 'a'), (3, 'b')...]
 		:return:
 		"""
 
@@ -89,63 +93,66 @@ class PriorityQueueForTuple:
 		self.percDown(1)
 		return retval
 
-	def rearrange_vertex(self, key, amt):
+	def rearrange_vertex(self, vertex, distance):
 		"""
 		to find the vertex that key, and rearrage the position
-		:param key: string
+		:param vertex: string
+		:param distance: new distance of the vertex
 		:return:
 		"""
 		done = False
-		my_key = 0
+		vertex_index = 0
 		i = 0
 		
 		# search key by value
 		while not done and i <= self.currentSize:
-			if self.heap_array[i][1] == key:
+			if self.heap_array[i][1] == vertex:
 				done = True
-				my_key = i
+				vertex_index = i
+			else:
+				i += 1
+		
+		# find the index
+		if vertex_index > 0:
+			# update the distance of the vertex
+			self.heap_array[vertex_index] = (distance, self.heap_array[vertex_index][1])
+			# compare and change position
+			self.percUp(vertex_index)
 			
-
-def printBTree(bt, depth):
-	if bt:
-		ch = bt.key
-	else:
-		return
-	# ch = '#'
-	
-	if depth > 0:
-		print ('%s%s%s' % ((depth - 1) * '  ', '--', ch))
-	else:
-		print (ch)
-	if not bt:
-		return
-	printBTree(bt.leftChild, depth + 1)
-	printBTree(bt.rightChild, depth + 1)
+# def printBTree(bt, depth):
+# 	if bt:
+# 		ch = bt.key
+# 	else:
+# 		return
+# 	# ch = '#'
+#
+# 	if depth > 0:
+# 		print ('%s%s%s' % ((depth - 1) * '  ', '--', ch))
+# 	else:
+# 		print (ch)
+# 	if not bt:
+# 		return
+# 	printBTree(bt.leftChild, depth + 1)
+# 	printBTree(bt.rightChild, depth + 1)
 
 
 def createHeapByInsert():
-	bh = BinHeap()
+	pqt = PriorityQueueForTuple()
 	print ('Insert')
 	for i in range(0, 100):
-		value = (random.random() * 100)
-		bh.insert(value)
-		print (value)
-	print ('Print Heap')
-	tree = binaryTree()
-	tree = tree.createLevelOrderTreeWithQueue(bh.heap_array)
-	printBTree(tree, 0)
+		value = random.randint(1, 100)
+		pqt.insert((value, 'v' + str(i)))
+		print (value, 'v' + str(i))
 
 
 def createHeapByList():
-	bh = BinHeap()
+	pqt = PriorityQueueForTuple()
 	print ('List')
-	alist = [random.random() for i in range(10)]
-	bh.buildHeapWithList(alist)
-	tree = binaryTree()
-	tree = tree.createLevelOrderTreeWithQueue(bh.heap_array)
-	printBTree(tree, 0)
+	alist = [(random.randint(1, 100), 'v' + str(i)) for i in range(10)]
+	pqt.buildHeapWithList(alist)
+	
 
 
 if __name__ == '__main__':
-	# createHeapByList()
-	createHeapByInsert()
+	createHeapByList()
+	# createHeapByInsert()
