@@ -10,8 +10,10 @@
 from __future__ import print_function
 from class_graph_adjacency_list import GraphAdjacencyList
 from Class_Queue import Queue
-from Class_SStack import
+from Class_SStack import SStack
 from class_priority_queue_tuple import PriorityQueueForTuple
+
+inf = float('inf')
 
 
 def deep_first_search(graph, start_v=None, end_v=None):
@@ -162,43 +164,15 @@ def breadth_first_search(graph, start_v=None, end_v=None):
 			return False
 
 		print ('*'*100)
-		print ('dfs_search_queue')
+		print ('bfs_search_queue')
 		print ('*'*100)
 		bfs_queue(graph, graph.get_vertex(start_v), graph.get_vertex(end_v))
 		
 	return visited_order
 
 
-def dijkstra(graph, start_v, end_v=None):
-	"""
-	 1 Dijkstra(G, W, s)　　　　　　//G表示图，W表示权值函数，s表示源顶点
-	 2 　　d[s] ←0　　　　　　　　　　//源点到源点最短路为0
-	 3 　　for each v ∈ V - {s}　　//3-8行均为初始化操作
-	 4 　　　　　do d[v]←∞
-	 5 　 　　　　  parent[v]←NIL
-	 6 　　S←∅　　　　　　　　
-	 7 　　Q←V　　　　　　　　//此处Q为优先队列，存储未进入S的各顶点以及从源点到这些顶点的估算距离，采用二叉堆（最小堆）实现，越小越优先
-	 8 　　while Q≠∅
-	 9 　　 do u←Extract-Min(Q)　　//提取估算距离最小的顶点，在优先队列中位于顶部，出队列，放入集合S中
-	10 　　　  S←S∪{u}
-	11 　　　　for each v ∈ Adj(u)　　//松弛操作，对与u相邻的每个顶点v，进行维持三角不等式成立的松弛操作。
-	12 　　　　　　do if d[v] > d[u] + w(u, v)
-	13 　　　　　　　　then d[v] = d[u] + w(u, v)　　//这一步隐含了更新优先队列中的值，DECREASE。
-	14 　　　　　　　　　　  parent[v]←u　　　　　　//置v的前驱结点为u
-	:param graph:
-	:param start_v:
-	:param end_v:
-	:return:
-	"""
-	
-	
-	pqt = PriorityQueueForTuple()
-	distance = [(0, 0)] * graph.num_vertices
-	
 
-
-
-if __name__ == '__main__':
+def create_graph_by_add_edge():
 	g = GraphAdjacencyList()
 
 	g.add_edge(0, 1, 5)
@@ -211,33 +185,60 @@ if __name__ == '__main__':
 	g.add_edge(5, 4, 8)
 	g.add_edge(5, 2, 1)
 
+	return g
+
+def create_graph_by_edges():
+	g = GraphAdjacencyList()
+	edges = {
+		'B': {'A': 5, 'D': 1, 'G': 2},
+		'A': {'B': 5, 'D': 3, 'E': 12, 'F': 5},
+		'D': {'B': 1, 'G': 1, 'E': 1, 'A': 3},
+		'G': {'B': 2, 'D': 1, 'C': 2},
+		'C': {'G': 2, 'E': 1, 'F': 16},
+		'E': {'A': 12, 'D': 1, 'C': 1, 'F': 2},
+		'F': {'A': 5, 'E': 2, 'C': 16}}
+
+	for v in edges:
+		for _key, _val in edges[v].items():
+			g.add_edge(v, _key, _val)
+
+	return g
+
+
+if __name__ == '__main__':
+	g1 = create_graph_by_add_edge()
+
+	g2 = create_graph_by_edges()
+
+	g = g2
+
 	g.draw_directed_graph()
 
 	# traverse graph
 	print ('-'*100)
-	print ('traverse graph')
+	print ('DFS traverse graph')
 	print ('-'*100)
 	print(deep_first_search(g))
 
 	# traverse grapth with a start
 	print ('-'*100)
-	print ('traverse grapth with a start')
+	print ('DFS traverse grapth with a start')
 	print ('-'*100)
 	g.reset_all_vertices_unvisited()
-	print(deep_first_search(g, 4))
+	print(deep_first_search(g, 'A'))
 
 	# traverse grapth with a start
 	print ('-'*100)
-	print ('search grapth with start and end')
+	print ('DFS search grapth with start and end')
 	print ('-'*100)
 	g.reset_all_vertices_unvisited()
-	print(deep_first_search(g, 4, 2))
+	print(deep_first_search(g, 'A', 'C'))
 
 	print ('+'*100)
-	print ('search grapth with start and end')
+	print ('BFS search grapth with start and end')
 	print ('+'*100)
 	g.reset_all_vertices_unvisited()
-	print(breadth_first_search(g, 4, 2))
+	print(breadth_first_search(g, 'A', 'C'))
 	
 	# traverse(g.getVertex(1))
 	# print('-'*80)

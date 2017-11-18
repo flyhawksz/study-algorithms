@@ -16,6 +16,10 @@ class Vertex:
 		self.neighbors = {}
 		self.visited = False
 
+		# use for shortest path
+		self.distance = float('inf')
+		self.predecessor = None
+
 	def add_neighbor(self, nbr, weight=0):
 		self.neighbors[nbr] = weight
 
@@ -31,6 +35,20 @@ class Vertex:
 
 	def get_weight(self, nbr):
 		return self.neighbors[nbr]
+
+	# use for shortest path
+	def set_distance(self, dist):
+		self.distance = dist
+
+	def get_distance(self):
+		return self.distance
+
+	def set_predecessor(self, pred):
+		self.predecessor = pred
+
+	def get_predecessor(self):
+		return self.predecessor
+
 
 	# def __repr__(self):
 	# 	return str(self.neighbors)

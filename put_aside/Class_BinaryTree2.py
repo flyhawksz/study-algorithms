@@ -1,17 +1,215 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2017/11/12 16:52
+# @Time    : 2017-9-27 14:24
 # @Author  : zhangqi
-# @Site    : 
-# @File    : Question_Create_Traverse_Binary_Tree.py
+# @File    : Class_BinaryTree.py
 # @Software: PyCharm Community Edition
 
-from Class_BinaryTree2 import binaryTree
+myTree = None
 
 from Class_SStack import SStack
 
 
-def printBTree(bt, depth):
+class treeNode:
+	def __init__(self, rootObj=None, leftChild=None, rightChild=None):
+		self.key = rootObj
+		self.leftChild = None
+		self.rightChild = None
+
+
+class binaryTree:
+	"""
+	BinaryTree(self, binaryTreeObj)
+	isEmpty(self)
+	num_nodes(self)
+	getData(self)
+	getLeftChild()
+	getRightChild()
+	setLeftChild(self, btree)
+	setRightChild(self, btree)
+	traversal(self)   # 遍历二叉树节点迭代器
+	forall()
+	"""
+
+	def __init__(self):
+		self.root = treeNode()
+
+	def createTreeByInput(self, root):
+		"""
+		input with pre-order string, and it is easy change into other order
+		:param root:
+		:return: root, a tree
+		"""
+		tmpKey = raw_input("please input a key, input '#' for Null")
+		if tmpKey == '#':
+			root = None
+		else:
+			root = treeNode(rootObj=tmpKey)
+			root.leftChild = self.createTreeByInput(root.leftChild)
+			root.rightChild = self.createTreeByInput(root.rightChild)
+
+		return root
+
+	def createTreeByListWithRecursion(self, preOrderList):
+		"""
+		根据前序列表重建二叉树
+		:param preOrder: 输入前序列表
+		:return: 二叉树
+		"""
+		preOrder = preOrderList
+		if preOrder is None or len(preOrder) <= 0:
+			return None
+		currentItem = preOrder.pop(0)  # 模拟C语言指针移动
+		if currentItem is '#':
+			root = None
+		else:
+			root = treeNode(currentItem)
+			root.leftChild = self.createTreeByListWithRecursion(preOrder)
+			root.rightChild = self.createTreeByListWithRecursion(preOrder)
+		return root
+
+	def createTreeByListWithStack(self, preOrderList):
+		"""
+		根据前序列表重建二叉树
+		:param preOrder: 输入前序列表
+		:return: 二叉树
+		"""
+		preOrder = preOrderList
+		pStack = SStack()
+
+		# check
+		if preOrder is None or len(preOrder) <= 0 or preOrder[0] is '#':
+			return None
+
+		# get the root
+		tmpItem = preOrder.pop(0)
+		root = treeNode(tmpItem)
+
+		# push root
+		pStack.push(root)
+		currentRoot = root
+
+		while preOrder:
+			# get another item
+			tmpItem = preOrder.pop(0)
+			# has child
+			if tmpItem is not '#':
+				# does not has left child, insert one
+				if currentRoot.leftChild is None:
+					currentRoot = self.insertLeft(currentRoot, tmpItem)
+					pStack.push(currentRoot.leftChild)
+					currentRoot = currentRoot.leftChild
+
+				# otherwise insert right child
+				elif currentRoot.rightChild is None:
+					currentRoot = self.insertRight(currentRoot, tmpItem)
+					pStack.push(currentRoot.rightChild)
+					currentRoot = currentRoot.rightChild
+			# one child is null
+			else:
+				# if has no left child
+				if currentRoot.leftChild is None:
+					currentRoot.leftChild = None
+
+					# get another item fill right child
+					tmpItem = preOrder.pop(0)
+					# has right child
+					if tmpItem is not '#':
+						currentRoot = self.insertRight(currentRoot, tmpItem)
+						pStack.push(currentRoot.rightChild)
+						currentRoot = currentRoot.rightChild
+					# right child is null
+					else:
+						currentRoot.rightChild = None
+						# pop itself
+						parent = pStack.pop()
+						# pos parent
+						if not pStack.is_empty():
+							parent = pStack.pop()
+						# parent become current root
+						currentRoot = parent
+
+						# return from right child, so the parent has right child, go to parent's parent
+						if currentRoot.rightChild is not None:
+							if not pStack.is_empty():
+								parent = pStack.pop()
+								currentRoot = parent
+
+				# there is a leftchild ,fill right child with null and return to parent
+				else:
+					currentRoot.rightChild = None
+					# pop itself
+					parent = pStack.pop()
+					if not pStack.is_empty():
+						parent = pStack.pop()
+					currentRoot = parent
+
+		return root
+
+	def createLevelOrderTreeWithQueue(self, levOder):
+		"""
+		:param root: a empty tree objedt
+		:param levOder: a list that item in level order
+		:return: tree
+		"""
+		root = treeNode()
+
+		if len(levOder) < 1:
+			return None
+
+		t = 0
+		myQueue = []
+
+		currentRoot = root
+		myQueue.append(currentRoot)
+		while myQueue and t <= len(levOder) - 1:
+			currentRoot = myQueue.pop(0)
+			currentRoot.key = levOder[t]
+			t += 1
+
+			if currentRoot.leftChild is None:
+				myQueue.append(self.insertLeft(currentRoot, None).leftChild)
+			if currentRoot.rightChild is None:
+				myQueue.append(self.insertRight(currentRoot, None).rightChild)
+
+		return root
+
+	def insertLeft(self, root, newNode):
+		if root.leftChild is None:
+			root.leftChild = treeNode(newNode)
+		else:
+			tmpNode = treeNode(newNode)
+			tmpNode.leftChild = root.leftChild
+			root.leftChild = tmpNode
+
+		return root
+
+	def insertRight(self, root, newNode):
+		if root.rightChild is None:
+			root.rightChild = treeNode(newNode)
+		else:
+			tmpNode = treeNode(newNode)
+			tmpNode.rightChild = root.rightChild
+			root.rightChild = tmpNode
+
+		return root
+
+	def isEmpty(self):
+		return self.key is None
+
+	def setRootValue(self, obj):
+		self.key = obj
+
+	def getRootValue(self):
+		return self.key
+
+	def getLeftChild(self):
+		return self.leftChild
+
+	def getRightChild(self):
+		return self.rightChild
+
+
+def printBTree(self, bt, depth):
 	'''''
 	递归打印这棵二叉树，#号表示该节点为NULL
 	'''

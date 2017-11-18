@@ -45,7 +45,7 @@ class PriorityQueueForTuple:
 		
 		else:  # there are left child and right child
 			# left child is smaller
-			if self.heap_array[index * 2] < self.heap_array[index * 2 + 1]:
+			if self.heap_array[index * 2][0] < self.heap_array[index * 2 + 1][0]:
 				# return left child index
 				return index * 2
 			else:
@@ -66,8 +66,20 @@ class PriorityQueueForTuple:
 		# if this heap has been ordered, may use short cut, quit compare
 		# else:
 		#     return
-	
-	#
+
+	# 一次性包括了 percDown 和 minChild 两个函数，似乎更容易理解
+	def _perDown(self, i):
+		left = 2 * i + 1
+		right = 2 * i + 2
+		little = i
+		if left < self.size - 1 and self.path[self.queue[left]] <= self.path[self.queue[i]]:
+			little = left
+		if right <= self.size - 1 and self.path[self.queue[right]] <= self.path[self.queue[little]]:
+			little = right
+		if little != i:
+			self.queue[i], self.queue[little] = self.queue[little], self.queue[i]
+			self._perDown(little)
+
 	def buildHeapWithList(self, alist):
 		"""
 		build a heap with list
@@ -76,6 +88,7 @@ class PriorityQueueForTuple:
 		"""
 
 		self.currentSize = len(alist)
+		self.heap_array = [(0, 0)]
 		for item in alist:
 			self.heap_array.append(item)
 			
@@ -93,10 +106,16 @@ class PriorityQueueForTuple:
 		self.percDown(1)
 		return retval
 
+	def isEmpty(self):
+		if self.currentSize == 0:
+			return True
+		else:
+			return False
+
 	def rearrange_vertex(self, vertex, distance):
 		"""
 		to find the vertex that key, and rearrage the position
-		:param vertex: string
+		:param vertex: vertex (class vertex)
 		:param distance: new distance of the vertex
 		:return:
 		"""
@@ -106,7 +125,7 @@ class PriorityQueueForTuple:
 		
 		# search key by value
 		while not done and i <= self.currentSize:
-			if self.heap_array[i][1] == vertex:
+			if self.heap_array[i][1] == vertex.id:
 				done = True
 				vertex_index = i
 			else:
