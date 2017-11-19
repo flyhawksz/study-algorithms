@@ -8,10 +8,10 @@
 
 
 from __future__ import print_function
-from class_graph_adjacency_list import GraphAdjacencyList
+
 from Class_Queue import Queue
 from Class_SStack import SStack
-from class_priority_queue_tuple import PriorityQueueForTuple
+from class_graph_adjacency_list import GraphAdjacencyList
 
 inf = float('inf')
 

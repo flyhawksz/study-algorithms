@@ -7,6 +7,8 @@
 # this heap takes key value pairs, we will assume that the keys are integers
 import random
 from Class_BinaryTree import binaryTree
+from cStringIO import StringIO
+import math
 
 
 class BinHeap:
@@ -25,9 +27,9 @@ class BinHeap:
 		# 存在2个数字以上
 		while index // 2 > 0:
 			# 与父节点比较
-			if self.heapList[index] < self.heapList[index//2]:
+			if self.heapList[index] < self.heapList[index // 2]:
 				# 交换父子节点
-				self.heapList[index], self.heapList[index // 2] = self.heapList[index//2], self.heapList[index]
+				self.heapList[index], self.heapList[index // 2] = self.heapList[index // 2], self.heapList[index]
 				# 序号切换到交换后的父节点
 				index = index // 2
 			# if more than parent ,quit
@@ -60,9 +62,9 @@ class BinHeap:
 
 			# change index
 			index = minChildIndex
-			# if this heap has been ordered, may use short cut, quit compare
-			# else:
-			#     return
+		# if this heap has been ordered, may use short cut, quit compare
+		# else:
+		#     return
 
 	#
 	def buildHeapWithList(self, alist):
@@ -73,7 +75,7 @@ class BinHeap:
 		while i > 0:
 			self.percDown(i)
 			i -= 1
-	
+
 	def delMin(self):
 		retval = self.heapList[1]
 		self.heapList[1] = self.heapList[self.currentSize]
@@ -83,47 +85,77 @@ class BinHeap:
 		return retval
 
 
-def printBTree(bt, depth):
-	
-	if bt:
-		ch = bt.key
-	else:
-		return
-		# ch = '#'
-		
-	if depth > 0:
-		print ('%s%s%s' % ((depth - 1) * '  ', '--', ch))
-	else:
-		print (ch)
-	if not bt:
-		return
-	printBTree(bt.leftChild, depth + 1)
-	printBTree(bt.rightChild, depth + 1)
+# def printBTree(bt, depth):
+# 	if bt:
+# 		ch = bt.key
+# 	else:
+# 		return
+# 	# ch = '#'
+#
+# 	if depth > 0:
+# 		print ('%s%s%s' % ((depth - 1) * '  ', '--', ch))
+# 	else:
+# 		print (ch)
+# 	if not bt:
+# 		return
+# 	printBTree(bt.leftChild, depth + 1)
+# 	printBTree(bt.rightChild, depth + 1)
 
+
+def show_tree(tree, total_width=36, fill=' '):
+	output = StringIO()
+	last_row = -1
+	for i, n in enumerate(tree):
+		if i:
+			row = int(math.floor(math.log(i + 1, 2)))
+		else:
+			row = 0
+		if row != last_row:
+			output.write('\n')
+		columns = 2 ** row
+		col_width = int(math.floor((total_width * 1.0) / columns))
+		output.write(str(n).center(col_width, fill))
+		last_row = row
+	print output.getvalue()
+	print '-' * total_width
+	print
+	return
+
+
+# data = random.sample(range(1,8), 7)
+# print 'data: ', data
+# show_tree(data)
 
 def createHeapByInsert():
 	bh = BinHeap()
 	print 'Insert'
-	for i in range(0, 100):
-		value = (random.random() * 100)
+	for i in range(0, 20):
+		value = (random.randint(1, 20))
 		bh.insert(value)
 		print value
 	print 'Print Heap'
-	tree = binaryTree()
-	tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
-	printBTree(tree, 0)
+	# tree = binaryTree()
+	# tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
+	show_tree(bh.heapList)
 
 
 def createHeapByList():
 	bh = BinHeap()
 	print 'List'
-	alist = [random.random() for i in range(10)]
+	alist = [random.randint(1, 100) for i in range(9)]
 	bh.buildHeapWithList(alist)
-	tree = binaryTree()
-	tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
-	printBTree(tree, 0)
+	# tree = binaryTree()
+	# tree = tree.createLevelOrderTreeWithQueue(bh.heapList)
+	show_tree(bh.heapList)
+
+
+# printBTree(tree, 0)
 
 
 if __name__ == '__main__':
-	# createHeapByList()
+	createHeapByList()
 	createHeapByInsert()
+
+	# data = random.sample(range(1,8), 7)
+	# print 'data: ', data
+	# show_tree(data)

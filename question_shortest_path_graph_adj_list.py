@@ -9,13 +9,13 @@
 
 from class_graph_adjacency_list import GraphAdjacencyList
 from Class_Queue import Queue
-from class_priority_queue_tuple import PriorityQueueForTuple
+import heapq as hq
 
 inf = float('inf')
 
+
 # use bfs method
 def shortest_path_unweighted_graph_adjacency_list(graph, start_v, end_v):
-
 	def to_do_vertex(vertex):
 		visited_order.append(vertex.id)
 		print('visited vertex: %s' % vertex.id)
@@ -34,7 +34,7 @@ def shortest_path_unweighted_graph_adjacency_list(graph, start_v, end_v):
 	my_queue.enqueue(start_v)
 	# traverse
 	while not my_queue.isempty():
-		
+
 		current_vertex = my_queue.dequeue()
 		for v in current_vertex.neighbors:
 			if not v.visited:
@@ -49,7 +49,7 @@ def shortest_path_unweighted_graph_adjacency_list(graph, start_v, end_v):
 					my_queue.enqueue(v)
 
 
-def dijkstra(graph, start_v, end_v=None):
+def dijkstra_graph_adjacency_list(graph, start_v, end_v=None):
 	"""
 	 1 Dijkstra(G, W, s)　　　　　　//G表示图，W表示权值函数，s表示源顶点
 	 2 　　d[s] ←0　　　　　　　　　　//源点到源点最短路为0
@@ -68,42 +68,57 @@ def dijkstra(graph, start_v, end_v=None):
 	:param graph:
 	:param start_v:
 	:param end_v: 如果不提供 end_v， 则遍历，取得源点到所有节点的最短路径长度
-	:return:
+	:return:processed　收录的节点的长度
+
 	"""
 
-	# 初始化
+	# 1.初始化
+	unprocessed = {}
+	processed = {}
 
-	pqt = PriorityQueueForTuple()
-	# 先设置所有节点的距离为无穷，即不连通
-	# distance = dict((inf, v.id) for v in graph.vertices_list)
-	# 设置所有节点的前节点为空
-	# pre_vertex = dict((v.id, None) for v in graph.vertices_list)
-	# 上述初始化已经在 vertex 初始化时已完成，见 vertex 类
-	pathes = [None] * graph.num_vertices
-	# 将源点 distance 设置为0， 将从优先堆中取出源点
-	start_v.set_distance = 0
-	# pqt.buildHeapWithList([(v.get_distance(), v) for v in graph.vertices_list.items()])
-	alist = []
-	for v in graph:
-		alist.append((v.get_distance(), v))
-	pqt.buildHeapWithList(alist)
+	for v in graph.vertices_list.values():
+		unprocessed[v.id] = inf
 
-	while not pqt.isEmpty():
-		# 取得当前为加入最短路径队列中节点路径最小值的节点。第一个取出的是源点
-		current_vertex = pqt.delMin()
-		# 从当前节点的邻居节点中逐一取出，重新计算。因为新加入的节点能影响的只能是邻居节点。
-		for next_vertex in current_vertex.neighbors:
-			new_distance = current_vertex.get_distance + current_vertex.get_weight(next_vertex)
-			# 如果重新计算后的距离值变小，则将新值更新到该节点
-			if  new_distance < next_vertex.get_distance:
-				# 更新距离值
-				next_vertex.set_distance = new_distance
-				# 更新前节点
-				next_vertex.set_predecessor = current_vertex
-				# 更新优先堆，将剩下的节点从新排列
-				pqt.rearrange_vertex(next_vertex, new_distance)
+	unprocessed[start_v.id] = 0
 
-	return graph
+	current_vertex = start_v
+	current_distance = 0
+
+	# 所有点遍历
+	for i in xrange(graph.num_vertices):
+		# 2.选择未被收录的节点中的最短路径节点 收录，并作为当前节点
+		# 字典是无序的，须转成 列表 方能排序
+		# candidates = [node for node in unvisited.items() if node[1]]  # 找出目前还有拿些点未松弛过
+		candidates = []
+		for node in unprocessed.items():
+			if node[1] < inf:
+				candidates.append(node)
+		# 如果 candidates 为空，说明所有节点都已经松弛过，或者图不连通，则退出循环
+		if len(candidates) == 0:
+			break
+		# (1) 提取估算距离最小的顶点方法1,使用列表排序,效率相对低，但容易理解
+		# # 将目前未收录，可以用来松弛的点, 按 距离 进行排序, 取最小值作为当前的节点和距离
+		# # current_vertex_id, current_distance = sorted(candidates, key=lambda x: x[1])[0]
+
+		# (2) 提取估算距离最小的顶点方法2，使用优先队列（元组）,效率相对高一些
+		t = hq.nsmallest(1, candidates, key=lambda x: x[1])
+		current_vertex_id, current_distance = t[0]
+		current_vertex = graph.get_vertex(current_vertex_id)
+		# 这个点已经松弛过，收录当前节点，并从未收录节点中删除
+		processed[current_vertex.id] = current_distance
+		unprocessed.pop(current_vertex.id)  # 字典(dict)删除元素, 可以选择两种方式, dict.pop(key)和del dict[key].
+
+		# 3.前的节点，更新所有邻居的距离
+		# 遍历所有邻居
+		for neighbor_vertex in current_vertex.neighbors:
+			# 未被访问的邻居
+			if neighbor_vertex.id in unprocessed:
+				new_distance = processed[current_vertex.id] + current_vertex.get_weight(neighbor_vertex)
+				if new_distance < unprocessed[neighbor_vertex.id]:
+					unprocessed[neighbor_vertex.id] = new_distance
+
+	return processed
+
 
 def dijkstra2():
 	nodes = ('A', 'B', 'C', 'D', 'E', 'F', 'G')
@@ -131,41 +146,10 @@ def dijkstra2():
 		visited[current] = currentDistance  # 这个点已经松弛过，记录
 		del unvisited[current]  # 从未访问过的字典中将这个点删除
 		if not unvisited: break  # 如果所有点都松弛过，跳出此次循环
-		candi取最小值dates = [node for node in unvisited.items() if node[1]]  # 找出目前还有拿些点未松弛过
-		current, currentDistance = sorted(candidates, key=lambda x: x[1])[0]  # 找出目前可以用来松弛的点,进行排序,
+		candidates = [node for node in unvisited.items() if node[1]]  # 找出目前还有拿些点未松弛过
+		current, currentDistance = sorted(candidates, key=lambda x: x[1])[0]  # 找出目前可以用来松弛的点,进行排序,取最小值
 
-
-def dijkstra3(graph, star_v, end_v=None):
-
-	def get_mini_dist_vertex(graph, star_v, end_v=None):
-		pass
-
-	# 初始化
-	unprocessed = set()
-	processed = set()
-
-	distance = {}
-	shortest_distance = {}
-	collected_vertices = {}
-	for v in graph.vertices_list:
-		unprocessed.add(v.id)
-		distance[v.id] = inf
-		collected_vertices[v.id] = False
-
-	processed.add(unprocessed.remove(start_v.id))
-	distance[start_v.id] = 0
-	shortest_distance[start_v.id] = 0
-
-	for i in xrange(graph.num_vertices):
-		m, closest_head = inf, 0
-		for tail in graph.vertices_list:
-			current_vertex = get_mini_dist_vertex()
-			for neighbor_vertex in current_vertex.neighbors:
-				if collected_vertices[neighbor_vertex.id] == False:
-					new_distance = distance[current_vertex.id] + current_vertex.get_weight(neighbor_vertex)
-					# if
-
-	# collected_vertex[v] = True
+	return visited
 
 
 def create_graph_by_add_edge():
@@ -202,11 +186,8 @@ def create_graph_by_edges():
 	return g
 
 
-if __name__ == '__main__':
-	visited_order = []
-
+def test_shortest_path():
 	g1 = create_graph_by_add_edge()
-
 	g2 = create_graph_by_edges()
 
 	g = g2
@@ -217,9 +198,9 @@ if __name__ == '__main__':
 	end_v = 'C'
 
 	# shortest path for graph adjacency list
-	print ('-'*100)
+	print ('-' * 100)
 	print ('traverse graph')
-	print ('-'*100)
+	print ('-' * 100)
 	dist, pre_v, visited = shortest_path_unweighted_graph_adjacency_list(g, g.get_vertex(start_v), g.get_vertex(end_v))
 	print ('the distance from %s to %s is %s: ' % (start_v, end_v, dist[end_v]))
 
@@ -234,10 +215,22 @@ if __name__ == '__main__':
 			break
 
 
+if __name__ == '__main__':
+	visited_order = []
+
+	start_v = 'B'
+	end_v = 'C'
+
+	# test_shortest_path()
+
 	# shortest path for graph adjacency list
-	print ('-'*100)
+	print ('-' * 100)
 	print ('dijkstra traverse graph')
-	print ('-'*100)
-	dijkstra2()
-	# g = dijkstra(g, g.get_vertex(start_v), g.get_vertex(end_v))
-	# print (g)
+	print ('-' * 100)
+	print (dijkstra2())
+	print ('-' * 100)
+	g = create_graph_by_edges()
+	# g.draw_directed_graph()
+	print (dijkstra_graph_adjacency_list(g, g.get_vertex(start_v)))
+# g = dijkstra(g, g.get_vertex(start_v), g.get_vertex(end_v))
+# print (g)
