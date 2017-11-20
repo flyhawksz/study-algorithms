@@ -224,6 +224,53 @@ def dijkstra_graph_adjacency_matrix(graph, start_v, end_v=None):
 	return processed, predecessor
 
 
+def bellman_ford_graph_adjacency_matrix(graph, start_v):
+	"""
+	与 dijkstra 算法的区别是这里采用对边进行遍历比较
+	Ford算法的每次迭代遍历所有边, 并对边进行松弛(relax)操作. 对边e进行松弛是指: 若从源点通过e.start到达e.stop的路径长小于已知最短路径, 则更新已知最短路径.
+	若路径中不存在负环, 则进行n-1次迭代后不存在可以进行松弛的边. 因此再遍历一次边, 若存在可松弛的边说明图中存在负环.
+	:param graph:
+	:param start_v:
+	:param end_v: 如果不提供 end_v， 则遍历，取得源点到所有节点的最短路径长度
+	:return:processed　收录的节点的长度
+
+	"""
+
+	# 1.初始化
+	num_vertex = graph.num_vertices
+	edges = graph.edges_array
+
+	# 与源点的距离
+	distance = [inf] * num_vertex
+	# 前驱节点 the predecessor vertex that come to current vertex
+	predecessor = [] *num_vertex
+
+	current_vertex_index = graph.vertices.index(start_v)
+	distance[current_vertex_index] = 0  # 这样第一次从未收录节点中取最小值,即可取到起点
+	predecessor[current_vertex_index] = None  # 起点无前驱
+
+	# 所有点遍历
+	for i in range(num_vertex):
+		for edge in edges:
+			# 在某边中，如果 tail 的距离 加上 该边的距离，小于 head 的距离
+			if distance[edge[0]] + edge[2] < distance[edge[1]]:
+				# 将当前边的　head 的距离更新为新的距离　
+				distance[edge[1]] = distance[edge[0]] + edge[2]
+				# 记录 head 的前躯为当前边的 tail
+				predecessor[edge[1]] = edge[0]
+
+			# 再次遍历检查是否存在负环　check negative loop
+			flag = False
+			for edge in edges:
+				# try to relax
+				if distance[edge[0]] + edge[2] < distance[edge[1]]:
+					flag = True
+					break
+			if flag:  # 如果存在负环，返回错误，各距离值无效
+				return False
+			return distance, predecessor
+
+
 def test_shortest_path_unweighted_graph_adjacency_matrix(g, start_v, end_v):
 	# shortest path for graph adjacency matrix
 	print ('-'*100)
