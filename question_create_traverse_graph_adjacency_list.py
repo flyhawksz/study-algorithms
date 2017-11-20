@@ -171,7 +171,6 @@ def breadth_first_search(graph, start_v=None, end_v=None):
 	return visited_order
 
 
-
 def create_graph_by_add_edge():
 	g = GraphAdjacencyList()
 
@@ -186,6 +185,7 @@ def create_graph_by_add_edge():
 	g.add_edge(5, 2, 1)
 
 	return g
+
 
 def create_graph_by_edges():
 	g = GraphAdjacencyList()
