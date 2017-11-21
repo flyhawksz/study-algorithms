@@ -22,7 +22,10 @@ def create_random_matrix(vex_num=10):
 	for i in range(vex_num):
 		one_list = []
 		for j in range(vex_num):
-			one_list.append(random.randint(1, 100))
+			if i == j:
+				one_list.append(0)
+			else:
+				one_list.append(random.randint(1, 100))
 		matrix.append(one_list)
 		nodes.append('v' + str(i))
 		
@@ -32,7 +35,7 @@ def create_random_matrix(vex_num=10):
 
 
 def create_undirected_matrix(my_graph):
-	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+	nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
 	matrix = [[0, 1, 1, 1, 1, 1, 0, 0],  # a
 			  [0, 0, 1, 0, 1, 0, 0, 0],  # b
@@ -57,7 +60,7 @@ def create_undirected_matrix(my_graph):
 
 
 def create_directed_matrix(my_graph):
-	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+	nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 	inf = float('inf')
 	matrix = [[0, 2, 1, 3, 9, 4, inf, inf],  # a
 			  [inf, 0, 4, inf, 3, inf, inf, inf],  # b
@@ -175,7 +178,7 @@ def shortest_path_unweighted_graph_adjacency_matrix(graph, start_v, end_v):
 	return False
 
 
-def dijkstra_graph_adjacency_matrix(graph, start_v, end_v=None):
+def dijkstra_graph_adjacency_matrix(graph, start_v):
 	"""
 	 1 Dijkstra(G, W, s)　　　　　　//G表示图，W表示权值函数，s表示源顶点
 	 2 　　d[s] ←0　　　　　　　　　　//源点到源点最短路为0
@@ -311,40 +314,66 @@ def bellman_ford_graph_adjacency_matrix(graph, start_v):
 	return distance, predecessor
 
 
+def floyd_warshall_graph_adjacency_matrix(graph):
+
+	def make_mat(m, n, fill=None):
+		mat = []
+		for i in range(m):
+			mat.append([fill] * n)
+		return mat
+
+	length = graph.num_vertices
+
+	# 距离矩阵， 用用来记录每个点作为起点时，到每个点的距离 行下标即起点，列即为起点到该列所在点的距离
+	distance = make_mat(length, length, fill=inf)
+	predecessor = make_mat(length, length, fill=None)
+
+	for i in range(length):
+		for j in range(length):
+			# 保i到顶点j的已知最短路径, 初始化为直接连接
+			distance[i][j] = graph.matrix[i][j]
+			# 保存从顶点i到顶点j的已知最短路径上下一个顶点, 初始化为j
+			predecessor[i][j] = j
+
+	for k in range(length):
+		for i in range(length):
+			for j in range(length):
+				# 如果 i，j 通过 k 连接的距离小于 i,j 直接连接，则更新距离
+				if distance[i][k] + distance[k][j] < distance[i][j]:
+					distance[i][j] = distance[i][k] + distance[k][j]
+					# 更新前驱为 中介 k
+					predecessor[i][j] = predecessor[i][k]
+
+	return distance, predecessor
+
 def test_shortest_path_unweighted_graph_adjacency_matrix(g, start_v, end_v):
 	# shortest path for graph adjacency matrix
 	print ('-'*100)
 	print ('traverse graph')
 	print ('-'*100)
-	dist, pre_v, visited = shortest_path_unweighted_graph_adjacency_matrix(g, start_v, end_v)
+	dist, predecessor, visited = shortest_path_unweighted_graph_adjacency_matrix(g, start_v, end_v)
 	print ('the distance from %s to %s is %s: ' % (start_v, end_v, dist[g.vertices.index(end_v)]))
 
 	_v = g.vertices.index(end_v)
 	print(g.vertices[_v])
-	while not pre_v[_v] is None:
+	while not predecessor[_v] is None:
 		# if pre_v[_v]:
-		v = pre_v[_v]
+		v = predecessor[_v]
 		print (g.vertices[v])
 		_v = v
 
 
-def test_dijkstra_graph_adjacency_matrix(g, start_v, end_v):
+def test_dijkstra_graph_adjacency_matrix(g, start_v):
 	print ('-' * 100)
 	print ('dijkstra_graph_adjacency_matrix')
 	print ('-' * 100)
 	
 	distance, predecessor = dijkstra_graph_adjacency_matrix(g, start_v)
 	print (distance)
-	
-	_v = g.vertices.index(end_v)
-	print('%s index: %s  distance: %s' % (g.vertices[_v], _v, distance[_v]))
-	
-	# list.reverse(predecessor)
-	while not predecessor[_v] is None:
-		# if pre_v[_v]:
-		v = predecessor[_v]
-		print ('%s index: %s  distance: %s' % (g.vertices[v], v, distance[v]))
-		_v = v
+
+	for end_v in g.vertices:
+		print ('distance and path for %s ---------------------------------------------' % end_v)
+		show_path(g, predecessor, distance, g.vertices.index(end_v))
 
 
 def test_bellman_ford_graph_adjacency_matrix(g, start_v):
@@ -363,19 +392,39 @@ def test_bellman_ford_graph_adjacency_matrix(g, start_v):
 		
 	else:
 		print ('there is a negative cycle')
-		
+
+
+def test_floyd_graph_adjacency_matrix(g):
+	print ('-' * 100)
+	print ('floyd_graph_adjacency_matrix')
+	print ('-' * 100)
+	distance, predecessor = floyd_warshall_graph_adjacency_matrix(g)
+
+	print (distance)
+	print (predecessor)
+
+
+def show_path(graph, predecessor, distance, end_vertice_index):
+	if predecessor[end_vertice_index]:
+		v = predecessor[end_vertice_index]
+		show_path(graph, predecessor, distance, v)
+		print ('%s index: %s  distance: %s' % (g.vertices[end_vertice_index], end_vertice_index, distance[end_vertice_index]))
+	else:
+		# print(g.vertices[end_vertice_index])
+		print ('%s index: %s  distance: %s' % (g.vertices[end_vertice_index], end_vertice_index, distance[end_vertice_index]))
+
 
 if __name__ == '__main__':
 	_graph = GraphMatrix()
 	# g = create_undirected_matrix(_graph)
 	# g = create_directed_matrix(_graph)
 	# g = create_directed_graph_from_edges(_graph)
-	# g = create_random_matrix(50)
+	g = create_random_matrix(10)
 	
 	# g.draw_directed_graph()
 
-	start_v = 'a'
-	end_v = 'h'
+	start_v = 'A'
+	end_v = 'G'
 
 	inf = float('inf')
 
@@ -383,13 +432,15 @@ if __name__ == '__main__':
 	# test_shortest_path_unweighted_graph_adjacency_matrix(g, start_v, end_v)
 	
 	# 2.测试有权重最短路径 Dijkstra
-	# start_v = 'v0'
+	start_v = 'v0'
 	# end_v = 'v45'
-	# test_dijkstra_graph_adjacency_matrix(g, start_v, end_v)
+	test_dijkstra_graph_adjacency_matrix(g, start_v)
+
+	test_floyd_graph_adjacency_matrix(g)
 	
 	# 3.测试存在负边 bellman-ford
-	g = create_directed_matrix_with_negative_edge(_graph)
-	# g.draw_directed_graph()
-	test_bellman_ford_graph_adjacency_matrix(g, start_v)
+	# g = create_directed_matrix_with_negative_edge(_graph)
+	# # g.draw_directed_graph()
+	# test_bellman_ford_graph_adjacency_matrix(g, start_v)
 	
 
