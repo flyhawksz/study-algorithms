@@ -20,17 +20,17 @@ class GraphMatrix:
 		:param vertices:a dict with vertex id and index of matrix , such as {vertex:index}
 		:param matrix: a matrix
 		"""
-		self.matrix = matrix
-		self.edges_dict = {}  # {(tail, head):weight}
-		self.edges_array = []  # (tail, head, weight)
-		self.vertices = vertices
+		self.matrix = matrix  # <type 'list'>: [[0, 2, 1, 3, 9, 4, inf, inf], [inf, 0, 4, inf, 3, inf, inf, inf], ]
+		self.edges_dict = {}  # {(tail, head):weight} {('a', 'b'): 2, ('a', 'd'): 3, ('a', 'c'): 1, ('a', 'f'): 4}
+		self.edges_array = []  # (tail, head, weight) <type 'list'>: [['a', 'b', 2], ['a', 'c', 1], ['a', 'd', 3]]
+		self.vertices = vertices  # <type 'list'>: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 		self.num_edges = 0
 
 		# if provide adjacency matrix then create the edges list
 		if len(matrix) > 0:
 			if len(vertices) != len(matrix):
 				raise IndexError
-			self.edges = self.getAllEdges()
+			self.edges = self.get_all_edges()
 			self.num_edges = len(self.edges)
 
 		# if do not provide a adjacency matrix, but provide the vertices list, build a matrix with 0
@@ -46,7 +46,7 @@ class GraphMatrix:
 		except IndexError:
 			print("节点下标出界")
 
-	def isEmpty(self):
+	def is_empty(self):
 		if self.num_vertices == 0:
 			self.num_vertices = len(self.matrix)
 		return self.num_vertices == 0
@@ -65,7 +65,7 @@ class GraphMatrix:
 		nRow = [0] * self.num_vertices
 		self.matrix.append(nRow)
 
-	def getVertex(self, key):
+	def get_vertex(self, key):
 		pass
 
 	def add_edges_from_list(self, edges_list):  # edges_list : [(tail, head, weight),()]
@@ -92,18 +92,18 @@ class GraphMatrix:
 		self.edges_array.append((tail, head, cost))
 		self.num_edges = len(self.edges_dict)
 
-	def getEdges(self, V):
+	def get_edges(self, V):
 		pass
 
-	def getVerticesNumbers(self):
+	def get_vertices_numbers(self):
 		if self.num_vertices == 0:
 			self.num_vertices = len(self.matrix)
 		return self.num_vertices
 
-	def getAllVertices(self):
+	def get_all_vertices(self):
 		return self.vertices
 
-	def getAllEdges(self):
+	def get_all_edges(self):
 		for i in range(len(self.matrix)):
 			for j in range(len(self.matrix)):
 				if 0 < self.matrix[i][j] < float('inf'):
@@ -186,17 +186,12 @@ def create_undirected_matrix(my_graph):
 			  [0, 0, 0, 0, 0, 1, 0, 1],  # g
 			  [0, 0, 0, 0, 0, 1, 1, 0]]  # h
 
-	# N[a][b]
-	# 1
 	# sum(N[f]))
-	my_graph = Graph_Matrix(nodes, matrix)
+	my_graph = GraphMatrix(nodes, matrix)
 	print(my_graph)
 
-	# my_graph.DepthFirstSearch()
-
-	# draw_undircted_graph(my_graph)
-
 	return my_graph
+
 
 def create_directed_matrix(my_graph):
 	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
@@ -210,7 +205,7 @@ def create_directed_matrix(my_graph):
 			  [inf, inf, inf, inf, inf, 1, 0, 6],  # g
 			  [inf, inf, inf, inf, inf, 9, 8, 0]]  # h
 
-	my_graph = Graph_Matrix(nodes, matrix)
+	my_graph = GraphMatrix(nodes, matrix)
 	print(my_graph)
 	return my_graph
 
@@ -227,7 +222,7 @@ def create_directed_graph_from_edges(my_graph):
 				 ('G', 'F', 3), ('G', 'E', 12), ('G', 'C', 10), ('C', 'E', 1),
 				 ('E', 'D', 7)]
 
-	my_graph = Graph_Matrix(nodes)
+	my_graph = GraphMatrix(nodes)
 	my_graph.add_edges_from_list(edge_list)
 	print(my_graph)
 
@@ -238,7 +233,7 @@ def create_directed_graph_from_edges(my_graph):
 	return my_graph
 
 if __name__ == '__main__':
-	my_graph = Graph_Matrix()
+	my_graph = GraphMatrix()
 	# created_graph = create_undirected_matrix(my_graph)
 	created_graph = create_directed_matrix(my_graph)
 	# created_graph = create_directed_graph_from_edges(my_graph)

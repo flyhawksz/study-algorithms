@@ -161,6 +161,65 @@ def dijkstra2():
 	return visited
 
 
+def bellman_ford_graph_adjacency_matrix(graph, start_v):
+	"""
+	与 dijkstra 算法的区别是这里采用对边进行遍历比较
+	Ford算法的每次迭代遍历所有边, 并对边进行松弛(relax)操作. 对边e进行松弛是指: 若从源点通过e.start到达e.stop的路径长小于已知最短路径, 则更新已知最短路径.
+	若路径中不存在负环, 则进行n-1次迭代后不存在可以进行松弛的边. 因此再遍历一次边, 若存在可松弛的边说明图中存在负环.
+	:param graph:
+	:param start_v:
+	:param end_v: 如果不提供 end_v， 则遍历，取得源点到所有节点的最短路径长度
+	:return:processed　收录的节点的长度
+
+	"""
+	
+	# 1.初始化
+	num_vertex = graph.num_vertices
+	edges = graph.edges_array
+	
+	# 与源点的距离
+	distance = [inf] * num_vertex
+	# 前驱节点 the predecessor vertex that come to current vertex
+	predecessor = [0] * num_vertex
+	
+	current_vertex_index = graph.vertices.index(start_v)
+	distance[current_vertex_index] = 0  # 这样第一次从未收录节点中取最小值,即可取到起点
+	# predecessor[current_vertex_index] = None  # 起点无前驱
+	
+	# 所有点遍历
+	for i in range(num_vertex):
+		for edge in edges:
+			tail_index = graph.vertices.index(edge[0])
+			head_index = graph.vertices.index(edge[1])
+			# print ('head index: %d' % head_index)
+			edge_cost = edge[2]
+			new_distance = distance[tail_index] + edge_cost
+			
+			# 在某边中，如果 tail 的距离 加上 该边的距离，小于 head 的距离
+			if new_distance < distance[head_index]:
+				# 将当前边的　head 的距离更新为新的距离　
+				distance[head_index] = new_distance
+				# 记录 head 的前躯为当前边的 tail
+				predecessor[head_index] = edge[0]
+	
+	# 再次遍历检查是否存在负环　check negative loop
+	flag = False
+	for edge in edges:
+		tail_index = graph.vertices.index(edge[0])
+		head_index = graph.vertices.index(edge[1])
+		edge_cost = edge[2]
+		new_distance = distance[tail_index] + edge_cost
+		
+		# 在某边中，如果 tail 的距离 加上 该边的距离，小于 head 的距离
+		if new_distance < distance[head_index]:
+			# 存在负环,退出
+			flag = True
+			break
+	if flag:  # 如果存在负环，返回错误，各距离值无效
+		return False
+	return distance, predecessor
+
+
 def create_graph_by_add_edge():
 	g = GraphAdjacencyList()
 	
@@ -187,6 +246,24 @@ def create_graph_by_edges():
 		'C': {'G': 2, 'E': 1, 'F': 16},
 		'E': {'A': 12, 'D': 1, 'C': 1, 'F': 2},
 		'F': {'A': 5, 'E': 2, 'C': 16}}
+	
+	for v in edges:
+		for _key, _val in edges[v].items():
+			g.add_edge(v, _key, _val)
+	
+	return g
+
+
+def create_graph_by_edges_with_negative_edge():
+	g = GraphAdjacencyList()
+	edges = {
+		'B': {'A': 5, 'D': 1, 'G': 2},
+		'A': {'B': 5, 'D': 3, 'E': 12, 'F': 5},
+		'D': {'B': 1, 'G': -1, 'E': 1, 'A': 3},
+		'G': {'B': 2, 'D': 1, 'C': 2},
+		'C': {'G': 2, 'E': 1, 'F': 16},
+		'E': {'A': 12, 'D': 1, 'C': 1, 'F': 2},
+		'F': {'A': 5, 'E': -2, 'C': 16}}
 	
 	for v in edges:
 		for _key, _val in edges[v].items():
@@ -224,14 +301,7 @@ def test_shortest_path():
 			break
 
 
-if __name__ == '__main__':
-	visited_order = []
-	
-	start_v = 'B'
-	end_v = 'C'
-	
-	# test_shortest_path()
-	
+def test_dijkstra_graph_adjacency_list():
 	# shortest path for graph adjacency list
 	print ('-' * 100)
 	print ('dijkstra traverse graph')
@@ -242,10 +312,47 @@ if __name__ == '__main__':
 	# g.draw_directed_graph()
 	print (dijkstra_graph_adjacency_list(g, g.get_vertex(start_v)))
 	
-	print ('the shortest distance to %s is: %s' % (end_v, dijkstra_graph_adjacency_list(g, g.get_vertex(start_v), g.get_vertex(end_v))))
+	print ('the shortest distance to %s is: %s' %
+	       (end_v, dijkstra_graph_adjacency_list(g, g.get_vertex(start_v), g.get_vertex(end_v))))
 	
 	current_vertex = g.get_vertex(end_v)
 	while current_vertex.predecessor:
 		print ('%s - %s' % (current_vertex.id, current_vertex.distance))
 		current_vertex = current_vertex.predecessor
+
+
+def test_bellman_ford_graph_adjacency_matrix():
+	
+	g = create_graph_by_edges_with_negative_edge()
+	
+	start_v = 'B'
+	
+	print ('-' * 100)
+	print ('bellman_ford_graph_adjacency_matrix')
+	print ('-' * 100)
+	
+	t = bellman_ford_graph_adjacency_matrix(g, start_v)
+	# 如果没有负环
+	if t:
+		distance, predecessor = t
+		print (distance)
 		
+		_v = g.vertices.index(end_v)
+		print('%s index: %s  distance: %s' % (g.vertices[_v], _v, distance[_v]))
+	
+	else:
+		print ('there is a negative cycle')
+
+
+if __name__ == '__main__':
+	visited_order = []
+	
+	start_v = 'B'
+	end_v = 'C'
+	
+	# test_shortest_path()
+	
+	test_bellman_ford_graph_adjacency_matrix()
+	
+
+	

@@ -56,14 +56,16 @@ class Vertex:
 
 class GraphAdjacencyList:
 	def __init__(self):
-		self.vertices_list = {}
-		self.edges_list = {}
-		# self.edges_array = []  # (tail, head, weight) for networkX to draw graph
+		self.vertices_list = {}  # dict vertex object
+		self.vertices = []  # <type 'list'>: ['A', 'B', 'E', 'D', 'F', 'C']
+		self.edges_list = {}  # dict of tuple {(0, 1): 5, (1, 2): 4,}
+		self.edges_array = []  # <type 'list'>: [[0, 1, 5], [0, 5, 2]] (tail, head, weight) for networkX to draw graph
 		self.num_vertices = 0
 		self.num_edges = 0
 
 	def add_vertex(self, key):
 		new_vertex = Vertex(key)
+		self.vertices.append(key)
 		self.vertices_list[key] = new_vertex
 		self.num_vertices += 1
 		return new_vertex
@@ -85,6 +87,7 @@ class GraphAdjacencyList:
 
 		if (tail, head) not in self.edges_list:
 			self.edges_list[(tail, head)] = cost
+			self.edges_array.append([tail, head, cost])
 
 		self.vertices_list[tail].add_neighbor(self.vertices_list[head], cost)
 		
@@ -93,6 +96,10 @@ class GraphAdjacencyList:
 		self.num_edges = len(self.edges_list)
 
 	def get_vertices(self):
+		vertices = [v for v in self.vertices_list.keys()]
+		return vertices
+		
+	def get_vertices_list(self):
 		return self.vertices_list
 
 	def __iter__(self):
