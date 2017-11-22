@@ -60,6 +60,7 @@ class GraphAdjacencyList:
 		self.vertices = []  # <type 'list'>: ['A', 'B', 'E', 'D', 'F', 'C']
 		self.edges_list = {}  # dict of tuple {(0, 1): 5, (1, 2): 4,}
 		self.edges_array = []  # <type 'list'>: [[0, 1, 5], [0, 5, 2]] (tail, head, weight) for networkX to draw graph
+		self.edges_array_for_sort = []  # (weight, tail, head) for sort to get shortest edge
 		self.num_vertices = 0
 		self.num_edges = 0
 
@@ -88,6 +89,7 @@ class GraphAdjacencyList:
 		if (tail, head) not in self.edges_list:
 			self.edges_list[(tail, head)] = cost
 			self.edges_array.append([tail, head, cost])
+			self.edges_array_for_sort.append([cost, tail, head])
 
 		self.vertices_list[tail].add_neighbor(self.vertices_list[head], cost)
 		

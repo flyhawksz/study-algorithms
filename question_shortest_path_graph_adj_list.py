@@ -9,6 +9,8 @@
 
 from class_graph_adjacency_list import GraphAdjacencyList
 from Class_Queue import Queue
+import networkx as nx
+import matplotlib.pyplot as plt
 import heapq as hq
 
 inf = float('inf')
@@ -91,20 +93,31 @@ def dijkstra_graph_adjacency_list(graph, start_v, end_v=None):
 	for i in xrange(graph.num_vertices):
 		# 2.选择未被收录的节点中的最短路径节点 收录，并作为当前节点
 		# 字典是无序的，须转成 列表 方能排序
+		# 字典也能排序
+		# In[21]: a = {'a': 1, 'b': 2, 'c': 4, 'd': 3}
+		# 按字典值排序
+		# In[22]: sorted(a.items(), key=lambda s: s[1])
+		# Out[22]: [('a', 1), ('b', 2), ('d', 3), ('c', 4)]
+		# 按字典键排序
+		# In[23]: sorted(a.items(), key=lambda s: s[0])
+		# Out[23]: [('a', 1), ('b', 2), ('c', 4), ('d', 3)]
 		# candidates = [node for node in unvisited.items() if node[1]]  # 找出目前还有拿些点未松弛过
-		candidates = []
-		for node in unprocessed.items():
-			if node[1] < inf:
-				candidates.append(node)
-		# 如果 candidates 为空，说明所有节点都已经松弛过，或者图不连通，则退出循环
-		if len(candidates) == 0:
-			break
+		
+		# candidates = []
+		# for node in unprocessed.items():
+		# 	if node[1] < inf:
+		# 		candidates.append(node)
+		# # 如果 candidates 为空，说明所有节点都已经松弛过，或者图不连通，则退出循环
+		# if len(candidates) == 0:
+		# 	break
 		# (1) 提取估算距离最小的顶点方法1,使用列表排序,效率相对低，但容易理解
 		# # 将目前未收录，可以用来松弛的点, 按 距离 进行排序, 取最小值作为当前的节点和距离
 		# # current_vertex_id, current_distance = sorted(candidates, key=lambda x: x[1])[0]
 		
 		# (2) 提取估算距离最小的顶点方法2，使用优先队列（元组）,效率相对高一些
-		t = hq.nsmallest(1, candidates, key=lambda x: x[1])
+		# t = hq.nsmallest(1, candidates, key=lambda x:x[1])
+		
+		t = sorted(unprocessed.iteritems(), key=lambda x: x[1])
 		current_vertex_id, current_distance = t[0]
 		current_vertex = graph.get_vertex(current_vertex_id)
 		# 这个点已经松弛过，收录当前节点，并从未收录节点中删除
@@ -122,7 +135,7 @@ def dijkstra_graph_adjacency_list(graph, start_v, end_v=None):
 					
 					neighbor_vertex.distance = new_distance
 					neighbor_vertex.predecessor = current_vertex
-					
+	
 	if end_v:
 		return processed[end_v.id]
 	else:
@@ -218,6 +231,100 @@ def bellman_ford_graph_adjacency_matrix(graph, start_v):
 	if flag:  # 如果存在负环，返回错误，各距离值无效
 		return False
 	return distance, predecessor
+
+
+# 最小生成树 kruskal
+def minimum_span_tree_kruskal(graph):
+	"""
+	1).记Graph中有v个顶点，e个边
+	2).新建图Graphnew，Graphnew中拥有原图中相同的e个顶点，但没有边
+	3).将原图Graph中所有e个边按权值从小到大排序
+	4).循环：从权值最小的边开始遍历每条边 直至图Graph中所有的节点都在同一个连通分量中
+	    if 这条边连接的两个节点于图Graphnew中不在同一个连通分量中添加这条边到图Graphnew中
+	:param graph:
+	:return:
+	"""
+	number_vertex = graph.num_vertices
+	# 用来记录当前分量的根节点, 用这个根节点来代表整个分量。如果代表元相关，则表示在同一分量中
+	# 可以用武林门派来代表分量，用掌门来表示代表元，如果某个人所属门派的掌门相同，他们就是同门派的
+	# 初始化代表元为节点本身
+	represent_element = {v: v for v in graph.vertices}
+	mst = []
+	edges = graph.edges_array_for_sort
+	edges.sort()
+	for w, vi, vj in edges:
+		# 边的两个端点属于不同的分量，即代表元
+		if represent_element[vi] != represent_element[vj]:
+			mst.append(((vi, vj), w))
+			
+			# 合并连通分量, 将代表元集合合并
+			_represent_element, _another_represent_element = represent_element[vi], represent_element[vj]
+			for v in graph.vertices:
+				if represent_element[v] == _another_represent_element:
+					represent_element[v] = _represent_element
+			
+			# 如果已经收集齐了所需要数量的边，结束循环
+			if len(mst) == number_vertex - 1:
+				break
+	if len(mst) == number_vertex - 1:
+		return mst
+	else:
+		# 图不连通，不能生成最小树
+		return False
+
+
+def minimum_span_tree_prim(graph):
+	"""
+	对于一个给定的图，
+	设置两个空的集合A、B:
+		A用于存储原始图的最小生成树的顶点，最开始的时候A中只包含一个顶点，
+		B中存放的是这个最小生成树相邻接的边权值，最开始的B是空集的
+	1、从与起点相邻接的 集合中找出权最小的节点
+	2、如果未被收录，收录
+	   收录的边的数量 + 1
+	
+	3、遍历 与当前节点相邻的节点，如果未收录，将其加入集合B
+	:param graph:
+	:return:
+	"""
+	number_vertex = graph.num_vertices
+	# 最小树集合
+	mst = [None] * number_vertex
+	# 与最小树邻接的点的集合，采用优先堆，按权值排序
+	adjacent_vertex = hq((0, 0, 0))
+	# 收录边的数量
+	collected_edges_count = 0
+	
+	while collected_edges_count < number_vertex and not adjacent_vertex.is_empty():
+		_weight, _tail, _head = adjacent_vertex.dequeue()
+		# 已收录则跳过
+		if mst[_head]:
+			continue
+		collected_edges_count += 1
+		
+		for _v, _w in graph.get_vertex(v).neighbors:
+			if not mst[_v]:
+				adjacent_vertex.enqueue(_w, _head, _v)
+				
+	return mst
+
+	
+
+def draw_minimum_span_tree(graph, mst):
+	G = nx.DiGraph()  # 建立一个空的无向图G
+	for node in graph.vertices:
+		G.add_node(str(node))
+	for (_edge, _weight) in mst:
+		G.add_edge(_edge[0], _edge[1], weight=_weight)
+	
+	# G.add_weighted_edges_from(self.edges_array)
+	
+	print("nodes:", G.nodes())  # 输出全部的节点： [1, 2, 3]
+	print("edges:", G.edges())  # 输出全部的边：[(2, 3)]
+	print("number of edges:", G.number_of_edges())  # 输出边的数量：1
+	nx.draw(G, with_labels=True)
+	plt.savefig("directed_graph.png")
+	plt.show()
 
 
 def create_graph_by_add_edge():
@@ -322,7 +429,6 @@ def test_dijkstra_graph_adjacency_list():
 
 
 def test_bellman_ford_graph_adjacency_matrix():
-	
 	g = create_graph_by_edges_with_negative_edge()
 	
 	start_v = 'B'
@@ -344,6 +450,19 @@ def test_bellman_ford_graph_adjacency_matrix():
 		print ('there is a negative cycle')
 
 
+def test_minimum_span_tree_kruskal():
+	print ('-' * 100)
+	print ('bellman_ford_graph_adjacency_matrix')
+	print ('-' * 100)
+	
+	g = create_graph_by_edges()
+	
+	mst = minimum_span_tree_kruskal(g)
+	print (mst)
+	
+	draw_minimum_span_tree(g, mst)
+
+
 if __name__ == '__main__':
 	visited_order = []
 	
@@ -352,7 +471,8 @@ if __name__ == '__main__':
 	
 	# test_shortest_path()
 	
-	test_bellman_ford_graph_adjacency_matrix()
+	# test_dijkstra_graph_adjacency_list()
 	
-
+	# test_bellman_ford_graph_adjacency_matrix()
 	
+	test_minimum_span_tree_kruskal()

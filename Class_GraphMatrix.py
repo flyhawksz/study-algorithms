@@ -22,7 +22,8 @@ class GraphMatrix:
 		"""
 		self.matrix = matrix  # <type 'list'>: [[0, 2, 1, 3, 9, 4, inf, inf], [inf, 0, 4, inf, 3, inf, inf, inf], ]
 		self.edges_dict = {}  # {(tail, head):weight} {('a', 'b'): 2, ('a', 'd'): 3, ('a', 'c'): 1, ('a', 'f'): 4}
-		self.edges_array = []  # (tail, head, weight) <type 'list'>: [['a', 'b', 2], ['a', 'c', 1], ['a', 'd', 3]]
+		self.edges_array = []  # [tail, head, weight] <type 'list'>: [['a', 'b', 2], ['a', 'c', 1], ['a', 'd', 3]]
+		self.edges_array_for_sort = []  # (weight, tail, head) for sort to get shortest edge
 		self.vertices = vertices  # <type 'list'>: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 		self.num_edges = 0
 
@@ -89,7 +90,8 @@ class GraphMatrix:
 		# 	self.matrix[self.vertices.index(toV)][self.vertices.index(fromV)] = cost
 
 		self.edges_dict[(tail, head)] = cost
-		self.edges_array.append((tail, head, cost))
+		self.edges_array.append([tail, head, cost])
+		self.edges_array_for_sort.append([tail, head, cost])
 		self.num_edges = len(self.edges_dict)
 
 	def get_edges(self, V):
@@ -194,7 +196,7 @@ def create_undirected_matrix(my_graph):
 
 
 def create_directed_matrix(my_graph):
-	nodes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+	nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 	inf = float('inf')
 	matrix = [[0, 2, 1, 3, 9, 4, inf, inf],  # a
 			  [inf, 0, 4, inf, 3, inf, inf, inf],  # b
