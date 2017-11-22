@@ -13,7 +13,7 @@ import networkx as nx
 class Vertex:
 	def __init__(self, key):
 		self.id = key
-		self.neighbors = {}
+		self.neighbors = {}  # {object vertex: weight}
 		self.visited = False
 
 		# use for shortest path
