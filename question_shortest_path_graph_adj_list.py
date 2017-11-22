@@ -291,18 +291,20 @@ def minimum_span_tree_prim(graph):
 	# 最小树集合
 	mst = [None] * number_vertex
 	# 与最小树邻接的点的集合，采用优先堆，按权值排序
-	adjacent_vertex = hq((0, 0, 0))
+	adjacent_vertex = [(0, 0, 0)]
 	# 收录边的数量
 	collected_edges_count = 0
 	
-	while collected_edges_count < number_vertex and not adjacent_vertex.is_empty():
-		_weight, _tail, _head = adjacent_vertex.dequeue()
+	while collected_edges_count < number_vertex and len(adjacent_vertex) > 0:
+		t = hq.heapify(adjacent_vertex)
+		# _weight, _tail, _head \
+		
 		# 已收录则跳过
 		if mst[_head]:
 			continue
 		collected_edges_count += 1
 		
-		for _v, _w in graph.get_vertex(v).neighbors:
+		for _v, _w in graph.get_vertex(_head).neighbors:
 			if not mst[_v]:
 				adjacent_vertex.enqueue(_w, _head, _v)
 				
@@ -450,14 +452,15 @@ def test_bellman_ford_graph_adjacency_matrix():
 		print ('there is a negative cycle')
 
 
-def test_minimum_span_tree_kruskal():
+def test_minimum_span_tree_kruskal_prim():
 	print ('-' * 100)
 	print ('bellman_ford_graph_adjacency_matrix')
 	print ('-' * 100)
 	
 	g = create_graph_by_edges()
 	
-	mst = minimum_span_tree_kruskal(g)
+	# mst = minimum_span_tree_kruskal(g)
+	mst = minimum_span_tree_prim(g)
 	print (mst)
 	
 	draw_minimum_span_tree(g, mst)
@@ -475,4 +478,4 @@ if __name__ == '__main__':
 	
 	# test_bellman_ford_graph_adjacency_matrix()
 	
-	test_minimum_span_tree_kruskal()
+	test_minimum_span_tree_kruskal_prim()
